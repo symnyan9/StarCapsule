@@ -1,0 +1,7 @@
+{
+  "schema": "cfd-review-template",
+  "version": 1,
+  "name": "Engineering Blue",
+  "html": "layout.html",
+  "css": "theme.css"
+}

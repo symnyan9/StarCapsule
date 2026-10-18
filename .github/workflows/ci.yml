@@ -1,0 +1,40 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.12', '3.14']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install .
+      - run: python -m unittest discover -s tests -v
+      - run: python -m cfd_review demo --output demo-check.html
+      - run: node --check src/cfd_review/assets/field-viewer.js
+      - run: node --check src/cfd_review/assets/studio.js
+
+  offline-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install '.[dev]'
+      - run: python -m playwright install --with-deps chromium
+      # Existing functional-copy assertions use Chinese; default-English and
+      # live language switching are exercised independently below.
+      - run: python -m cfd_review demo --language zh-CN --output demo-check.html
+      - run: python tools/check_studio.py --html demo-check.html --output browser-checks
+      - run: python tools/check_language.py --output language-checks

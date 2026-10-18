@@ -1,0 +1,23 @@
+{
+  "schema": "cfd-review-pack",
+  "version": 1,
+  "id": "synthetic-packed-triangle",
+  "name": "Synthetic packing fixture",
+  "meta": {
+    "title": "Synthetic triangle: CSV plus native STL",
+    "source": "Mathematical test fixture; not a CFD solution",
+    "sourceKey": "synthetic-packed-triangle-v1",
+    "units": "m",
+    "axis": {"up": "z"},
+    "isDemo": true,
+    "halfCar": false,
+    "ranges": {"Cp": [-1, 1], "CpT": [0, 1]},
+    "surfaceRange": [-1, 1]
+  },
+  "coordinateColumns": ["X", "Y", "Z"],
+  "fields": {"Cp": "Cp", "CpT": "CpT"},
+  "transform": {"scale": 1, "axes": [0, 1, 2], "signs": [1, 1, 1], "offset": [0, 0, 0]},
+  "tolerance": 0.000001,
+  "parts": [{"id": "triangle", "name": "Synthetic triangle", "csv": "raw/synthetic.csv", "stl": "raw/synthetic.stl"}],
+  "sections": [{"x": 0, "csv": "raw/synthetic.csv", "stl": "raw/synthetic.stl"}]
+}

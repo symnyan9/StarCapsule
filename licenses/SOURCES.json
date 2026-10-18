@@ -1,0 +1,143 @@
+{
+  "purpose": "Licenses retained for the optional Windows CPython runtime distribution. The source wheel does not bundle CPython or these native DLLs.",
+  "checkedDate": "2026-10-18",
+  "profile": {
+    "source": "https://raw.githubusercontent.com/python/cpython/v3.14.2/PCbuild/get_externals.bat",
+    "sha256": "d3cfef51d5aa78b6834fa2889b5a0a810e4e1efd0babcf8be988faf9c79fb674",
+    "scope": "Dependency versions follow official CPython 3.14.2 Windows build inputs. This records provenance, not independent reproducibility of every installed DLL."
+  },
+  "observedRuntimeVersions": {
+    "python": "3.14.2",
+    "OpenSSL": "OpenSSL 3.0.18 30 Sep 2025",
+    "SQLite": "3.50.4",
+    "zlibCompatibility": "1.3.1.zlib-ng",
+    "Zstandard": "1.5.7",
+    "Expat": "2.7.3",
+    "mpdecimal": "4.0.0",
+    "Tcl": "8.6.15"
+  },
+  "files": [
+    {
+      "file": "CPYTHON_LICENSE.txt",
+      "component": "CPython",
+      "version": "3.14.2",
+      "source": "https://raw.githubusercontent.com/python/cpython/v3.14.2/LICENSE",
+      "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231",
+      "bytes": 13804,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "CPYTHON_THIRD_PARTY_LICENSES.rst",
+      "component": "CPython incorporated components",
+      "version": "3.14.2",
+      "source": "https://raw.githubusercontent.com/python/cpython/v3.14.2/Doc/license.rst",
+      "sha256": "c695d550b135e53e38807e76496d1db17d22c40e461d1f3f354c86188d3305dd",
+      "bytes": 57595,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "MICROSOFT_RUNTIME_NOTICE.txt",
+      "component": "Windows binary runtime conditions",
+      "version": "CPython 3.14.2 profile",
+      "source": "https://raw.githubusercontent.com/python/cpython/v3.14.2/PC/crtlicense.txt",
+      "sha256": "3c71b3ae243121f6f227374cd1ef7c59ed07b1969b330d0e947f91a3a1b3fd73",
+      "bytes": 1738,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "OPENSSL_LICENSE.txt",
+      "component": "OpenSSL",
+      "version": "3.0.18",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/openssl-3.0.18/LICENSE.txt",
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+      "bytes": 10175,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "ZLIB_NG_LICENSE.md",
+      "component": "zlib-ng",
+      "version": "2.2.4",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/zlib-ng-2.2.4/LICENSE.md",
+      "sha256": "6c9f0d975b41afaa34d22f55bb8986ce69e5cb7ad327cb2b28820cd425edf5ee",
+      "bytes": 867,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "ZSTD_LICENSE.txt",
+      "component": "Zstandard",
+      "version": "1.5.7",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/zstd-1.5.7/LICENSE",
+      "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+      "bytes": 1549,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "TCL_LICENSE.txt",
+      "component": "Tcl",
+      "version": "8.6.15",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/tcl-core-8.6.15.0/license.terms",
+      "sha256": "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16",
+      "bytes": 2255,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "TK_LICENSE.txt",
+      "component": "Tk",
+      "version": "8.6.15",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/tk-8.6.15.0/license.terms",
+      "sha256": "2cde822b93ca16ae535c954b7dfe658b4ad10df2a193628d1b358f1765e8b198",
+      "bytes": 2267,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "LIBLZMA_LICENSING.txt",
+      "component": "liblzma / XZ Utils",
+      "version": "5.2.5",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/xz-5.2.5/COPYING",
+      "sha256": "bcb02973ef6e87ea73d331b3a80df7748407f17efdb784b61b47e0e610d3bb5c",
+      "bytes": 2775,
+      "retained": "Complete upstream file, unchanged"
+    },
+    {
+      "file": "SQLITE_PUBLIC_DOMAIN.txt",
+      "component": "SQLite",
+      "version": "3.50.4",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/sqlite-3.50.4.0/sqlite3.h",
+      "sourceSha256": "abd1514e0351f79393d1be882830afdb40a8099e8257f311f0bfdf8486f11bea",
+      "sha256": "a95f044a030c6587a4d4401fd40246f0ad55fafca548b0fb4b1dec235d5cf335",
+      "bytes": 542,
+      "retained": "Initial public-domain dedication in sqlite3.h; heading and source URLs added"
+    },
+    {
+      "file": "OPENSSL_COPYRIGHT.txt",
+      "component": "OpenSSL copyright",
+      "version": "3.0.18",
+      "source": "https://raw.githubusercontent.com/python/cpython-source-deps/openssl-3.0.18/README.md",
+      "sourceSha256": "8d566c9771b96a1d95068190473a854c799affda645fd5bac927eb240aedd9f2",
+      "sha256": "1b3addf75dac1ff9994f80b4726813f7b2a4fb8ef440e9f3cc9a024272961f24",
+      "bytes": 236,
+      "retained": "Upstream Copyright section unchanged; source URL added"
+    }
+  ],
+  "additionalRetainedFiles": "The Windows package also preserves its unmodified runtime/LICENSE.txt and installed Tk license. That aggregate includes bzip2, libffi and other runtime notices.",
+  "runtimeBinarySnapshot": {
+    "scope": "Checksums of public CPython runtime files selected for the Windows package; filenames are relative to runtime/. These do not describe any CFD model.",
+    "files": {
+      "python.exe": "fda7026477256845afab371e354c4d512896665f1761939cb5887d0a9dec257a",
+      "pythonw.exe": "58b39b6d8dc9f51a94f1a3143e49b7498fb804a101f2b33baa14bd72d45298f8",
+      "python314.dll": "7ffe3ab11342db03cc18b026f27485c0f74f5bf10f239f1f6573394900596394",
+      "DLLs/libcrypto-3.dll": "e03dd02fdcfb791981c9962827cfcf495f2a47a514c1526efb57f847a9df514a",
+      "DLLs/libssl-3.dll": "1e4bc0638682bfcbb36f4465d6a2e9944d917a60f05ecc8ddf9e96847e05e13f",
+      "DLLs/libffi-8.dll": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "DLLs/sqlite3.dll": "420c203801acd8d0345f8d5786abb94c60c36605feb4b84fbf27fdbf076ab59c",
+      "DLLs/zlib1.dll": "1dd27f0411ebb31bd148a61589cee254410915f1e6c37aa3ffa52fac71a5426c",
+      "DLLs/tcl86t.dll": "a308beae8555cff5ac2aff7eaf0aef40b5fe173f047e246dc49da9a4d3ef62f9",
+      "DLLs/tk86t.dll": "20f4876506bce7f89e53570e64fd1dce30a64548326b45f372871c7019560df4",
+      "DLLs/_lzma.pyd": "2376cd374ce8c2c5ecf573226e563a96975599533f86a5f5eba5bdb705e341bb",
+      "DLLs/_zstd.pyd": "8f04a54778d4f21202f1bb9cfd5d080c5c5022158016dcaaf5908f7e2350270c",
+      "vcruntime140.dll": "052ad6a20d375957e82aa6a3c441ea548d89be0981516ca7eb306e063d5027f4",
+      "vcruntime140_1.dll": "6a99bc0128e0c7d6cbbf615fcc26909565e17d4ca3451b97f8987f9c6acbc6c8",
+      "LICENSE.txt": "935cf13e19f8c31b497d20b05d73623431a226b230c3599bc30fa3348979bc68"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "fixture": "Explicit synthetic DEMO only; not real-SIM validation",
+  "checks": {
+    "two explicitly synthetic cases and isosurface layers": true,
+    "native mouse drag changes camera": true,
+    "native mouse camera linking": true,
+    "unlink keeps the other camera independent": true,
+    "native zoom button decreases camera distance": true,
+    "slice linking uses nearest common X, not frame index": true,
+    "variable selector links Cp": true,
+    "manual Cp range synchronizes": true,
+    "Cp and CpT ranges have independent memories": true,
+    "actual section colors use the linked legend range": true,
+    "invalid UI color range preserves last valid range": true,
+    "unlink keeps other slice independent": true,
+    "sweep reverses at real final plane": true,
+    "pause stops sweep": true,
+    "isosurface hides independently": true,
+    "isosurface opacity remains independent": true,
+    "isosurface color range uses an independent actual buffer": true,
+    "part visibility is independent": true,
+    "native triangle raw-value pick succeeds": true,
+    "color saturation does not alter same-point raw pick": true,
+    "geometry and scalar source arrays stay unchanged": true,
+    "right-click annotation includes complete view state": true,
+    "annotation restores camera, frame, field, ranges and layers": true,
+    "title and case name are editable": true,
+    "native file import adds another independent case": true,
+    "downloaded project JSON restores notes and all cases": true,
+    "optional missing fields remain missing and unavailable": true,
+    "empty rejected atomically": true,
+    "wrong schema rejected atomically": true,
+    "NaN field rejected atomically": true,
+    "out of bounds vertex rejected atomically": true,
+    "out of bounds state frame rejected atomically": true,
+    "reversed state range rejected atomically": true,
+    "nonfinite state camera rejected atomically": true,
+    "foreign source state rejected atomically": true,
+    "no common scalar across sections rejected atomically": true,
+    "nonmissing saved value on missing surface scalar rejected atomically": true,
+    "nonmissing saved value on geometry-only layer rejected atomically": true,
+    "prototype key rejected atomically": true,
+    "HTML-like names render as text": true,
+    "ordinary duplicate JSON key rejected atomically": true,
+    "escaped duplicate JSON key rejected atomically": true,
+    "browser SIM refusal keeps project and explains local exporter": true,
+    "native fullscreen button enters browser fullscreen": true,
+    "native fullscreen button exits browser fullscreen": true,
+    "1440px page has no horizontal overflow": true,
+    "1920px page has no horizontal overflow": true,
+    "downloaded HTML reopens offline without sidecar assets": true,
+    "no browser page errors": true,
+    "no runtime internet requests attempted": true
+  },
+  "errors": [],
+  "network": [],
+  "mouse_camera_before": [
+    {
+      "position": [
+        5.921680835878155,
+        -7.302841291359666,
+        4.682960751429077
+      ],
+      "target": [
+        0.9249999523162842,
+        0,
+        0.4550000037997961
+      ]
+    },
+    {
+      "position": [
+        5.921680835878153,
+        -7.302841291359664,
+        4.682960751429075
+      ],
+      "target": [
+        0.9249999523162842,
+        0,
+        0.4550000037997961
+      ]
+    }
+  ],
+  "mouse_camera_after": [
+    {
+      "position": [
+        -0.35837249899613854,
+        -7.003524402525195,
+        7.1987055101871364
+      ],
+      "target": [
+        0.9249999523162842,
+        0,
+        0.4550000037997961
+      ]
+    },
+    {
+      "position": [
+        -0.35837249899613854,
+        -7.003524402525195,
+        7.1987055101871364
+      ],
+      "target": [
+        0.9249999523162842,
+        0,
+        0.4550000037997961
+      ]
+    }
+  ]
+}

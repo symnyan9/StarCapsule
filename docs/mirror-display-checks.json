@@ -1,0 +1,31 @@
+{
+  "release": "0.2.4",
+  "fixture": "Synthetic mathematical DEMO only; no CFD or STAR validation",
+  "checks": {
+    "legacy source metadata supplies independent initial mirror defaults": true,
+    "dedicated full-car switch is usable without changing the symmetry declaration": true,
+    "native checkbox adds mirrored surfaces sections and postprocessing layers": true,
+    "mirror meshes share geometry material and source scalar arrays": true,
+    "full-car bounds include the opposite Y half": true,
+    "mirrored picking reports unchanged scalar and inverse source Y coordinate": true,
+    "color saturation preserves the mirrored raw reading": true,
+    "disabling mirror clears mirrored selection and removes its hit target": true,
+    "new cuts and CpT alpha filtering share the mirrored color buffer": true,
+    "independent layer opacity visibility and limits apply to both halves": true,
+    "part controls hide and restore both halves together": true,
+    "repeated toggles have bounded scene and GPU resource counts": true,
+    "all geometry field and source arrays remain byte-equivalent": true,
+    "state boolean validation rejects truthy strings and numbers atomically": true,
+    "legacy states without a flag restore the source metadata default": true,
+    "annotations restore display mirroring without editing scientific metadata": true,
+    "project save and restore retain independent mirror settings": true,
+    "portable HTML reopens full-car display and notes offline": true,
+    "same-canvas half comparison keeps both original sources without remirroring": true,
+    "full sources and crossing-Y geometry cannot accidentally gain another half": true,
+    "explicit half confirmation enables the switch while mirrored notes protect its declaration": true,
+    "reversible unused half confirmation leaves a disabled unchecked mirror switch": true,
+    "no uncaught browser errors or external requests": true
+  },
+  "errors": [],
+  "network": []
+}

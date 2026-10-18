@@ -1,0 +1,177 @@
+// Generated adapter. Objects created here exist only in this owned export session.
+// No run/step, mesh, initialize/clear solution or saveState calls are present.
+import star.common.*;
+import star.vis.*;
+import star.base.neo.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+public class ReviewExport extends StarMacro {
+  private final File output = new File(@@OUTPUT@@);
+  private Simulation sim;
+  private Representation representation;
+  private final List<FieldFunction> fields = new ArrayList<>();
+  private final List<String> references = new ArrayList<>();
+  private int exported = 0;
+  private static boolean meshPart(Part part) {
+    return part instanceof IsoPart || part instanceof PlaneSection || part instanceof ThresholdPart ||
+      part instanceof CylinderSection || part instanceof SphereSection || part instanceof ArbitrarySection;
+  }
+  private FieldFunction existingScalar(String name, String magnitudeOf) {
+    FieldFunction field;
+    if (!magnitudeOf.isEmpty()) {
+      FieldFunction vector=sim.getFieldFunctionManager().getFunction(magnitudeOf);
+      if(vector==null || vector.getTypeAsEnum()!=FieldFunctionTypeOption.Type.VECTOR)
+        throw new IllegalArgumentException("Missing configured magnitude source vector: "+magnitudeOf);
+      field=vector.getMagnitudeFunction();
+    } else field=sim.getFieldFunctionManager().getFunction(name);
+    if(field==null || field.getTypeAsEnum()!=FieldFunctionTypeOption.Type.SCALAR || !name.equals(field.getFunctionName()))
+      throw new IllegalArgumentException("Missing configured scalar function: "+name);
+    return field;
+  }
+  private UserFieldFunction scalar(String name, String definition) {
+    UserFieldFunction field = sim.getFieldFunctionManager().createFieldFunction();
+    field.setPresentationName(name);
+    field.setFunctionName(name);
+    field.getTypeOption().setSelected(FieldFunctionTypeOption.Type.SCALAR);
+    field.setDefinition(definition);
+    return field;
+  }
+  private void reference(String name) {
+    reference(sim.getFieldFunctionManager().getFunction(name));
+  }
+  private void reference(FieldFunction field) {
+    if (field instanceof star.flow.PressureCoefficientFunction) {
+      String name=field.getFunctionName();
+      star.flow.PressureCoefficientFunction coefficient = (star.flow.PressureCoefficientFunction)field;
+      String safeName = name.replace("\\", "\\\\").replace("\"", "\\\"");
+      references.add("{\"function\":\"" + safeName + "\",\"densityKgM3\":" + coefficient.getReferenceDensity().getSIValue() +
+        ",\"velocityMS\":" + coefficient.getReferenceVelocity().getSIValue() +
+        ",\"pressurePa\":" + coefficient.getReferencePressure().getSIValue() + "}");
+    }
+  }
+  private Region region(String name) {
+    Region r = sim.getRegionManager().getRegion(name);
+    if (r == null) throw new IllegalArgumentException("Missing region: " + name);
+    return r;
+  }
+  private Boundary boundary(String regionName, String name) {
+    Boundary b = region(regionName).getBoundaryManager().getBoundary(name);
+    if (b == null) throw new IllegalArgumentException("Missing boundary: " + regionName + "/" + name);
+    return b;
+  }
+  private static String quote(String value) {
+    StringBuilder result=new StringBuilder("\"");
+    for(char c:value.toCharArray()) {
+      if(c=='\"' || c=='\\')result.append('\\').append(c);
+      else if(c<32)result.append(String.format("\\u%04x",(int)c));
+      else result.append(c);
+    }
+    return result.append('\"').toString();
+  }
+  private void exportJointPart(Part part,String stem,FieldFunction field) throws IOException {
+    // Solution export selects the saved finite-volume mesh. Reject ambiguous
+    // multiple representations instead of attaching the wrong geometry label.
+    Representation sole=null;
+    for(Representation candidate:sim.getRepresentationManager().getObjects()) {
+      if(candidate instanceof FvRepresentation && ((FvRepresentation)candidate).getCellCount()>0) {
+        if(sole!=null) throw new IllegalStateException("Joint layer export requires one populated finite-volume representation");
+        sole=candidate;
+      }
+    }
+    if(sole==null || !sole.equals(representation)) throw new IllegalStateException("Joint layer representation differs from the saved solution mesh");
+    String directory=System.getenv("CFD_REVIEW_NATIVE_OUTPUT");
+    File caseFile=new File(directory==null?output:new File(directory),stem+".case");
+    if(!caseFile.getParentFile().toPath().toRealPath().equals(output.toPath().toRealPath()))
+      throw new IOException("Joint output alias target differs from the export directory");
+    try {
+      sim.println("CFD_REVIEW_JOINT_BEGIN "+stem);
+      ImportManager exporter=sim.getExportManager();exporter.setFormatType(SolutionExportFormat.Type.CASE);
+      exporter.export(caseFile.getAbsolutePath(),Collections.<Region>emptyList(),Collections.<Boundary>emptyList(),
+        Arrays.asList(part),Arrays.asList(field),false,true);
+      if(!caseFile.isFile() || caseFile.length()==0)throw new IOException("Missing joint native case file");
+      Units units=sim.getUnitsManager().getInternalUnits(field.getDimensionsVector());
+      String meta="{\"complete\":true,\"dataAtVerts\":true,\"fieldFunction\":"+quote(field.getFunctionName())+
+        ",\"internalUnitsSuffix\":"+quote(units.getSuffix())+",\"internalUnitsName\":"+quote(units.getPresentationName())+
+        ",\"representation\":"+quote(representation.getPresentationName())+"}";
+      try(Writer writer=new OutputStreamWriter(new FileOutputStream(new File(output,stem+".meta.json")),StandardCharsets.UTF_8)){writer.write(meta);}
+      sim.println("CFD_REVIEW_JOINT_COMPLETE "+stem);exported++;
+    } finally {
+      sim.getDataSourceManager().deleteDataSources(Collections.<NamedObject>singletonList(part),representation);
+      sim.println("CFD_REVIEW_VISUAL_CACHE_RELEASED "+stem);
+    }
+  }
+  private void exportPart(Part part, String stem, Collection<? extends NamedObject> fieldSources) throws IOException {
+    exportPart(part,stem,fieldSources,fields);
+  }
+  private void exportPart(Part part, String stem, Collection<? extends NamedObject> fieldSources,
+      List<FieldFunction> selectedFields) throws IOException {
+    File csv = new File(output, stem + ".csv");
+    File stl = new File(output, stem + ".stl");
+    // Some Windows native writers cannot use Unicode absolute paths. Python
+    // provides an ASCII alias verified against this exact output directory.
+    String nativeDirectory = System.getenv("CFD_REVIEW_NATIVE_OUTPUT");
+    File nativeStl = nativeDirectory == null ? stl : new File(nativeDirectory, stem + ".stl");
+    if (!nativeStl.getParentFile().toPath().toRealPath().equals(output.toPath().toRealPath()))
+      throw new IOException("Native output alias target differs from the export directory");
+    XyzInternalTable table=null;
+    try {
+      // Tessellate before evaluating additional coloring fields: the native STL
+      // writer's temporary buffers then precede the scalar-table memory peak.
+      sim.println("CFD_REVIEW_STL_BEGIN "+stem);
+      part.exportDataSourceSTL(representation, false, nativeStl);
+      sim.println("CFD_REVIEW_STL_COMPLETE "+stem);
+      if(!selectedFields.isEmpty()) {
+        table = sim.getTableManager().createTable(XyzInternalTable.class);
+        table.setPresentationName("CRS_" + stem);
+        table.setRepresentation(representation);
+        table.setCoordinateSystem(sim.getCoordinateSystemManager().getLabCoordinateSystem());
+        table.setExtractVertexData(true);
+        table.getParts().setObjects(fieldSources);
+        table.setFieldFunctions(selectedFields);
+        sim.println("CFD_REVIEW_TABLE_BEGIN "+stem);
+        table.extract();
+        table.export(csv);
+        sim.println("CFD_REVIEW_TABLE_COMPLETE "+stem);
+      }
+    } finally {
+      if(table!=null) sim.getTableManager().removeObjects(table);
+      Set<NamedObject> exportedSources=new LinkedHashSet<NamedObject>(fieldSources);
+      exportedSources.add(part);
+      // Visualization caches belong to this owned export session. This is not
+      // a solution clear: source fields, mesh and iteration are left intact.
+      sim.getDataSourceManager().deleteDataSources(exportedSources,representation);
+      sim.println("CFD_REVIEW_VISUAL_CACHE_RELEASED "+stem);
+    }
+    if ((!selectedFields.isEmpty() && (!csv.isFile() || csv.length() == 0)) || !stl.isFile() || stl.length() <= 84)
+      throw new IOException("Missing or empty export: " + stem);
+    exported++;
+  }
+  public void execute() {
+    sim = getActiveSimulation();
+    output.mkdirs();
+    int iteration = sim.getSimulationIterator().getCurrentIteration();
+    try {
+      representation = sim.getRepresentationManager().getObject(@@REPRESENTATION@@);
+      if (!(representation instanceof FvRepresentation) || ((FvRepresentation)representation).getCellCount() <= 0)
+        throw new IllegalStateException("Configured representation has no finite-volume mesh");
+      @@FIELD_SETUP@@
+      try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(output,"references.json")), StandardCharsets.UTF_8)) {
+        writer.write("[" + String.join(",", references) + "]");
+      }
+      UserFieldFunction allSurface = scalar("CRS_ConstantForSurface", "1.0");
+      @@EXPORT_BODY@@
+      int after = sim.getSimulationIterator().getCurrentIteration();
+      if (after != iteration) throw new IllegalStateException("Iteration changed during export");
+      try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(output,"complete.json")), StandardCharsets.UTF_8)) {
+        writer.write("{\"complete\":true,\"operation\":\"export\",\"exportedMeshes\":" + exported +
+          ",\"iterationBefore\":" + iteration + ",\"iterationAfter\":" + after +
+          ",\"cellCount\":" + ((FvRepresentation)representation).getCellCount() + "}");
+      }
+      sim.println("CFD_REVIEW_EXPORT_COMPLETE");
+    } catch (Exception error) {
+      throw new RuntimeException("CFD Review export failed", error);
+    }
+  }
+}

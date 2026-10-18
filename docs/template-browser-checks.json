@@ -1,0 +1,20 @@
+{
+  "fixture": "Synthetic only; native STAR not launched",
+  "checks": {
+    "engineering-blue shell and actual theme styles present": true,
+    "template SVG is embedded and renders without a sidecar": true,
+    "all original engine data/runtime/style slots survive custom layout": true,
+    "template keeps the complete shared-canvas A/B composition": true,
+    "custom layout preserves native range editing and original source arrays": true,
+    "creator watermark visible in custom template": true,
+    "custom template watermark follows native fullscreen and exit": true,
+    "exported standalone retains template, A/B composition, notes and ranges": true,
+    "creator watermark survives custom-template standalone reopen": true,
+    "minimum-slot template loads the complete existing engine": true,
+    "no uncaught browser errors": true,
+    "no external requests attempted": true
+  },
+  "errors": [],
+  "network": [],
+  "passed": true
+}

@@ -1,0 +1,27 @@
+{
+  "release": "0.2.3",
+  "fixture": "Explicit synthetic DEMO; no STAR process or real CFD data",
+  "checks": {
+    "both readouts sit between camera tools and canvas": true,
+    "initial empty state is distinct": true,
+    "actual double click populates highlighted raw reading": true,
+    "a real scalar is isolated in a filled metric rectangle": true,
+    "first picked result does not move or shrink the canvas": true,
+    "zero remains an explicit scalar value": true,
+    "CpT uses the same independent scalar emphasis": true,
+    "missing scalar has an explicit missing state": true,
+    "geometry-only readout has no fabricated scalar rectangle": true,
+    "color changes retain raw pick and reading state": true,
+    "reset clears selected reading and returns to empty": true,
+    "saved selection restores its readout and highlight": true,
+    "a visible miss clears the former selected reading": true,
+    "switching section clears a now irrelevant selection": true,
+    "long names remain safe readable text in a bounded strip": true,
+    "selected critical actions differ from ordinary view presets": true,
+    "exported HTML restores the scientific pick and top highlight": true,
+    "desktop canvas remains usable in both viewports": true,
+    "no browser errors or online requests": true
+  },
+  "errors": [],
+  "network": []
+}

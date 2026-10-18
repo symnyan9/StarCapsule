@@ -1,0 +1,20 @@
+[
+  {
+    "file": "three.min.js",
+    "url": "https://raw.githubusercontent.com/mrdoob/three.js/r146/build/three.min.js",
+    "bytes": 606296,
+    "sha256": "3a6602548c758cca4e2762d50e802a5400b4c663b6a638d76a9163598467ded4"
+  },
+  {
+    "file": "OrbitControls.js",
+    "url": "https://raw.githubusercontent.com/mrdoob/three.js/r146/examples/js/controls/OrbitControls.js",
+    "bytes": 25944,
+    "sha256": "fab106fa8f5eafb9d16216c9b454d673fc5d974be2c20a7a6f05cb6d4e66cee2"
+  },
+  {
+    "file": "THREE_LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/mrdoob/three.js/r146/LICENSE",
+    "bytes": 1081,
+    "sha256": "fbf3943930dacbf56aabb8dc5d816440bd16aa6f4cc78ddbdf12106ee1807832"
+  }
+]

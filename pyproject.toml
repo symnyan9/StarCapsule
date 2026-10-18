@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "starcapsule-studio"
+version = "0.3.0"
+description = "Portable offline STAR-CCM+ results for interactive 3D review"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "licenses/*"]
+authors = [{name = "Symn"}]
+keywords = ["cfd", "star-ccm", "offline", "visualization", "engineering-review"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["playwright>=1.48"]
+
+[project.scripts]
+starcapsule = "cfd_review.cli:main"
+cfd-review = "cfd_review.cli:main"
+
+[project.gui-scripts]
+starcapsule-gui = "cfd_review.gui:main"
+cfd-review-gui = "cfd_review.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cfd_review = ["assets/*", "assets/vendor/*", "assets/templates/*/*", "assets/templates/*/assets/*", "star_macros/*"]

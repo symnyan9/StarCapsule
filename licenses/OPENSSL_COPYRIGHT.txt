@@ -1,0 +1,10 @@
+Source: https://raw.githubusercontent.com/python/cpython-source-deps/openssl-3.0.18/README.md
+
+Copyright
+=========
+
+Copyright (c) 1998-2025 The OpenSSL Project
+
+Copyright (c) 1995-1998 Eric A. Young, Tim J. Hudson
+
+All rights reserved.

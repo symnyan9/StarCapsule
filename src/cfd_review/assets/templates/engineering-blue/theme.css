@@ -1,0 +1,13 @@
+/* Edit the outer shell and presentation tokens; retain the engine app slot. */
+:root{--accent:#1267ae;--frame:#102c48;--line:#bdcddd;--ink:#152b40;--muted:#536a7e;background:#e8eef5}
+body.engineering-blue{margin:0;background:#e8eef5;color:#152b40}
+.review-template-heading{display:flex;align-items:center;gap:12px;min-height:54px;padding:7px 16px;border-bottom:2px solid #1673bd;background:#102c48;color:#fff}
+.review-template-heading img{flex:none;width:30px;height:30px}
+.review-template-heading h1{margin:0;font-size:18px;line-height:1.35;font-weight:650;letter-spacing:normal}
+.review-template-eyebrow{margin:0;font-size:10px;font-weight:600;line-height:1.5;letter-spacing:.14em;color:#a6c7e8}
+.review-template-caption{margin:0 0 0 auto;font-size:12px;line-height:1.6;color:#c4d8ec}
+.review-template-main{padding:8px 10px 0}
+.review-template-main #app{border:1px solid #adbed0;background:#fff;box-shadow:0 4px 18px #102c4812}
+.review-template-main .studio-header{background:#173b5d}
+.review-template-main .studio-workspace{min-height:420px}
+.review-template-footer{padding:7px 16px 10px;color:#536a7e;font-size:12px;line-height:1.6}

@@ -1,0 +1,73 @@
+{
+  "release": "0.2.6",
+  "product": "StarCapsule Studio",
+  "date": "2026-10-18",
+  "python": {
+    "versions": [
+      "3.10.5",
+      "3.14.2"
+    ],
+    "passedPerVersion": 184,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "nativeCallsMocked": true
+  },
+  "syntheticBrowser": {
+    "general": 50,
+    "lowCopyMemory": 21,
+    "halfStitch": 24,
+    "layoutImport": 28,
+    "mirror": 23,
+    "compression": 28,
+    "total": 174,
+    "pageErrors": 0,
+    "externalRequests": 0
+  },
+  "privateRealSavedHTML": {
+    "checksPassed": 12,
+    "originalHTMLUnchanged": true,
+    "STARStarted": false,
+    "sourcePartsAndSectionsAndQLayersRetained": true,
+    "losslessRawTextSHA256Matches": true,
+    "fileBytesBefore": [
+      361867422,
+      367337250
+    ],
+    "fileBytesAfter": [
+      158791739,
+      161401063
+    ],
+    "repeatedStitchCycles": 3,
+    "heapBeforeBytes": 722456076,
+    "heapAfterBytes": 722779166,
+    "combinedCompressedHTMLBytes": 314633255,
+    "commonActualXPlanes": 1
+  },
+  "startup": {
+    "browser": "Owned Chromium, file:// offline, software WebGL",
+    "runsPerVariant": 2,
+    "v025PlainSeconds": [
+      44.992,
+      43.036
+    ],
+    "v026PlainSeconds": [
+      39.94,
+      38.902
+    ],
+    "v026CompressedSeconds": [
+      9.422,
+      10.605
+    ],
+    "scope": "Single machine; warm filesystem and concurrent local workload possible; not cross-device guarantee"
+  },
+  "installation": {
+    "distribution": "starcapsule-studio",
+    "version": "0.2.6",
+    "runtimeByteMatches": 28,
+    "newAndLegacyCLIWorked": true,
+    "existingUserDataPreserved": true
+  },
+  "publicationPerformed": false,
+  "privateGeometryAndSourcePathsIncluded": false
+}

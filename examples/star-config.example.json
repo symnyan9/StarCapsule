@@ -1,0 +1,33 @@
+{
+  "schema": "cfd-review-star-config",
+  "version": 1,
+  "id": "your-case",
+  "name": "Your saved case",
+  "sim": "YOUR_SOLVED_CASE.sim",
+  "representation": "Volume Mesh",
+  "meta": {
+    "title": "Your saved CFD result",
+    "source": "Replace with saved-state identification and verified reference definitions",
+    "sourceKey": "replace-with-stable-source-identity",
+    "units": "m",
+    "axis": {"up": "z"},
+    "isDemo": false,
+    "halfCar": false,
+    "ranges": {"Cp": [-3, 3], "CpT": [-0.5, 1]},
+    "surfaceRange": [-3, 3]
+  },
+  "fields": {
+    "Cp": {"function": "YOUR_CP_FIELD"},
+    "CpT": {"function": "YOUR_CPT_FIELD"}
+  },
+  "surfaces": [
+    {
+      "id": "selected-walls",
+      "name": "Selected wall surfaces",
+      "boundaries": [{"region": "YOUR_FLUID_REGION", "name": "YOUR_WALL_BOUNDARY"}]
+    }
+  ],
+  "sectionRegions": ["YOUR_FLUID_REGION"],
+  "xSections": [0, 1],
+  "tolerance": 0.000001
+}

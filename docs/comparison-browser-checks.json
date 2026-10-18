@@ -1,0 +1,32 @@
+{
+  "release": "0.2.3",
+  "fixture": "Synthetic DEMO only; not CFD or native STAR validation",
+  "checks": {
+    "one creator credit shares the primary status row without extra bottom space": true,
+    "template CSS cannot accidentally hide or restyle the creator credit": true,
+    "one creator credit follows active and fullscreen views and returns to the primary row": true,
+    "two original synthetic half sources": true,
+    "Python and browser composition are equivalent": true,
+    "one canvas and one camera contain two independent halves": true,
+    "opposite Y geometry without per-case full-model mirroring": true,
+    "real common X planes only, originals retain unequal grids": true,
+    "native mouse drag rotates the shared camera": true,
+    "surface picks identify both originals and inverse Y source coordinates": true,
+    "shared manual color limits retain both raw point readings": true,
+    "original source arrays stay immutable": true,
+    "section picking resolves each native source range": true,
+    "independent 3D layers keep scalar definitions and source picking": true,
+    "project roundtrip retains composition and source-attributed note": true,
+    "note restores original source point and shared range": true,
+    "self-contained exported HTML reopens one canvas with attributed notes": true,
+    "exported HTML recreates exactly one creator credit in the existing status row": true,
+    "no common real X planes keeps surface and layers usable": true,
+    "incompatible cut fields are omitted without invented scalars": true,
+    "layer-only sources render two attributed groups in one canvas": true,
+    "full or two-sided geometry cannot masquerade as a half model": true,
+    "no external requests": true,
+    "no uncaught page errors": true
+  },
+  "errors": [],
+  "network": []
+}

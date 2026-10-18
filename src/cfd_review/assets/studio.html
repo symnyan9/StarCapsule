@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="color-scheme" content="light dark">
+<title>StarCapsule Studio</title>
+<style id="studio-style">{{STUDIO_CSS}}</style>
+<style id="field-viewer-style">{{FIELD_VIEWER_CSS}}</style>
+</head>
+<body>
+<div id="app"><p class="studio-boot">Opening offline 3D workspace…</p></div>
+<script id="cfd-project-data" type="application/json">{{PROJECT_JSON}}</script>
+<script id="three-runtime">{{THREE_JS}}</script>
+<script id="orbit-runtime">{{ORBIT_CONTROLS_JS}}</script>
+<script id="field-viewer-runtime">{{FIELD_VIEWER_JS}}</script>
+<script id="studio-runtime">{{STUDIO_JS}}</script>
+</body>
+</html>

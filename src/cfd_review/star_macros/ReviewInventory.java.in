@@ -1,0 +1,208 @@
+// Generated adapter for a licensed local STAR-CCM+ session. No solver or source save calls.
+import star.common.*;
+import star.vis.*;
+import star.base.neo.NamedObject;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+public class ReviewInventory extends StarMacro {
+  private final File output = new File(@@OUTPUT@@);
+  private final Map<String,FieldFunction> allFields = new LinkedHashMap<>();
+  private final Map<String,String> magnitudeRoots = new LinkedHashMap<>();
+  private static String quote(String value) {
+    StringBuilder b = new StringBuilder("\"");
+    for (char c : value.toCharArray()) {
+      if (c == '"' || c == '\\') b.append('\\').append(c);
+      else if (c < 32) b.append(String.format("\\u%04x", (int)c));
+      else b.append(c);
+    }
+    return b.append('"').toString();
+  }
+  private static String names(Collection<?> objects) {
+    StringJoiner result = new StringJoiner(",", "[", "]");
+    for (Object object : objects) {
+      if (object instanceof star.base.neo.NamedObject)
+        result.add(quote(((star.base.neo.NamedObject)object).getPresentationName()));
+      else result.add(quote(String.valueOf(object)));
+    }
+    return result.toString();
+  }
+  private static String numbers(double[] values) {
+    StringJoiner result = new StringJoiner(",", "[", "]");
+    for (double value : values) {
+      if (!Double.isFinite(value)) throw new IllegalArgumentException("Non-finite source property");
+      result.add(Double.toString(value));
+    }
+    return result.toString();
+  }
+  private static boolean meshPart(Part part) {
+    return part instanceof IsoPart || part instanceof PlaneSection || part instanceof ThresholdPart ||
+      part instanceof CylinderSection || part instanceof SphereSection || part instanceof ArbitrarySection;
+  }
+  private void remember(FieldFunction field) {
+    if (field != null) {
+      allFields.put(field.getFunctionName(), field);
+      if (field instanceof VectorMagnitudeFieldFunction)
+        magnitudeRoots.put(field.getFunctionName(), ((VectorMagnitudeFieldFunction)field).getRootFunctionName());
+    }
+  }
+  private static String bounds(Simulation sim, NamedObject object, Representation representation) {
+    if (representation == null) return ",\"boundsError\":\"No populated finite-volume representation\"";
+    try {
+      sim.println("CFD_REVIEW_BOUNDS_BEGIN "+object.getPresentationName());
+      Bounds3D box = new Bounds3D(sim.getDataSourceManager().getPartExtents(Arrays.asList(object), representation));
+      double[] low = new double[3], high = new double[3];
+      for (int i=0; i<3; i++) {
+        low[i]=box.getLower(i); high[i]=box.getUpper(i);
+        if (!Double.isFinite(low[i]) || !Double.isFinite(high[i]) || low[i]>high[i])
+          throw new IllegalStateException("Empty or invalid native geometry extents");
+      }
+      sim.println("CFD_REVIEW_BOUNDS_COMPLETE "+object.getPresentationName());
+      return ",\"bounds\":{\"min\":"+numbers(low)+",\"max\":"+numbers(high)+
+        ",\"units\":\"m\",\"representation\":"+quote(representation.getPresentationName())+
+        ",\"method\":\"STAR DataSourceManager.getPartExtents\"}";
+    } catch (Exception error) {
+      sim.println("CFD_REVIEW_BOUNDS_ERROR "+object.getPresentationName()+" "+error.toString());
+      return ",\"boundsError\":"+quote(error.toString());
+    }
+  }
+  public void execute() {
+    Simulation sim = getActiveSimulation();
+    output.mkdirs();
+    try {
+      int iteration = sim.getSimulationIterator().getCurrentIteration();
+      Representation boundsRepresentation = null;
+      StringJoiner representationDetails = new StringJoiner(",", "[", "]");
+      for (Representation representation : sim.getRepresentationManager().getObjects()) {
+        boolean finiteVolume = representation instanceof FvRepresentation;
+        Long cellCount = null;
+        String inspectionError = "";
+        if (finiteVolume) {
+          try { cellCount = Long.valueOf(((FvRepresentation)representation).getCellCount()); }
+          catch (Exception error) { inspectionError = ",\"inspectionError\":"+quote(error.toString()); }
+        }
+        boolean exportable = finiteVolume && cellCount != null && cellCount.longValue() > 0;
+        representationDetails.add("{\"name\":"+quote(representation.getPresentationName())+
+          ",\"type\":"+quote(representation.getClass().getSimpleName())+
+          ",\"isFiniteVolume\":"+finiteVolume+",\"cellCount\":"+
+          (cellCount == null ? "null" : cellCount.toString())+",\"exportable\":"+exportable+inspectionError+"}");
+        if (exportable) {
+          if (boundsRepresentation == null || "Volume Mesh".equals(representation.getPresentationName()) ||
+              (!"Volume Mesh".equals(boundsRepresentation.getPresentationName()) &&
+               representation.getPresentationName().compareTo(boundsRepresentation.getPresentationName()) < 0))
+            boundsRepresentation = representation;
+        }
+      }
+      StringJoiner regions = new StringJoiner(",", "[", "]");
+      StringJoiner boundaryDetails = new StringJoiner(",", "[", "]");
+      for (Region region : sim.getRegionManager().getRegions()) {
+        regions.add("{\"name\":" + quote(region.getPresentationName()) +
+          ",\"boundaries\":" + names(region.getBoundaryManager().getObjects()) + "}");
+        for (Boundary boundary : region.getBoundaryManager().getObjects()) {
+          boundaryDetails.add("{\"region\":"+quote(region.getPresentationName())+
+            ",\"name\":"+quote(boundary.getPresentationName())+
+            ",\"type\":"+quote(boundary.getBoundaryType().getClass().getSimpleName())+
+            bounds(sim,boundary,boundsRepresentation)+"}");
+        }
+      }
+      for (FieldFunction field : new ArrayList<FieldFunction>(sim.getFieldFunctionManager().getObjects())) {
+        remember(field);
+        if (field.getTypeAsEnum() == FieldFunctionTypeOption.Type.VECTOR) {
+          try { remember(field.getMagnitudeFunction()); }
+          catch (Exception ignored) { /* Unavailable derived fields remain absent. */ }
+        }
+      }
+      StringJoiner derivedDetails = new StringJoiner(",", "[", "]");
+      for (Part part : sim.getPartManager().getObjects()) {
+        String detail = "{\"name\":"+quote(part.getPresentationName())+
+          ",\"type\":"+quote(part.getClass().getSimpleName())+
+          ",\"className\":"+quote(part.getClass().getName())+
+          ",\"exportableMesh\":"+meshPart(part)+
+          ",\"inputPartNames\":"+names(part.getInputPartsCollection());
+        if (part instanceof IsoPart) {
+          IsoPart iso=(IsoPart)part;
+          FieldFunction criterion=iso.getFieldFunction(); remember(criterion);
+          double[] values=iso.getActiveIsoValue().getValues().toDoubleArray();
+          detail+=",\"scalarFunction\":"+quote(criterion.getFunctionName())+
+            ",\"criterion\":"+quote(criterion.getFunctionName())+",\"isoValues\":"+numbers(values);
+          if(values.length==1) detail+=",\"threshold\":"+Double.toString(values[0]);
+        } else if (part instanceof ThresholdPart) {
+          ThresholdPart threshold=(ThresholdPart)part;
+          FieldFunction criterion=threshold.getFieldFunction(); remember(criterion);
+          detail+=",\"scalarFunction\":"+quote(criterion.getFunctionName())+
+            ",\"criterion\":"+quote(criterion.getFunctionName())+
+            ",\"thresholdRange\":"+numbers(threshold.getRange());
+        } else if (part instanceof PlaneSection) {
+          PlaneSection plane=(PlaneSection)part;
+          detail+=",\"planeOrigin\":"+numbers(plane.getOrigin().toDoubleArray())+
+            ",\"planeNormal\":"+numbers(plane.getOrientation().toDoubleArray());
+        }
+        if(meshPart(part)) detail+=",\"boundsDeferred\":\"Derived geometry is evaluated only when selected for export; wall extents are read during inventory\"";
+        derivedDetails.add(detail+"}");
+      }
+      StringJoiner sceneDetails = new StringJoiner(",", "[", "]");
+      for (Scene scene : sim.getSceneManager().getScenes()) {
+        StringJoiner displayers = new StringJoiner(",", "[", "]");
+        for (Displayer displayer : scene.getDisplayerManager().getObjects()) {
+          Collection<NamedObject> inputs=displayer.getInputParts().getObjects();
+          List<NamedObject> derived=new ArrayList<>();
+          for(NamedObject input:inputs) if(input instanceof Part) derived.add(input);
+          String detail="{\"name\":"+quote(displayer.getPresentationName())+
+            ",\"type\":"+quote(displayer.getClass().getSimpleName())+
+            ",\"inputPartNames\":"+names(inputs)+",\"derivedPartNames\":"+names(derived)+
+            ",\"opacity\":"+Double.toString(displayer.getOpacity());
+          if(displayer instanceof ScalarDisplayer) {
+            ScalarDisplayQuantity quantity=((ScalarDisplayer)displayer).getScalarDisplayQuantity();
+            FieldFunction field=quantity.getFieldFunction(); remember(field);
+            if(field!=null) detail+=",\"fieldFunction\":"+quote(field.getFunctionName());
+            double low=quantity.getRangeMin(), high=quantity.getRangeMax();
+            if(Double.isFinite(low)&&Double.isFinite(high)&&low<high)
+              detail+=",\"colorRange\":"+numbers(new double[]{low,high});
+            if(quantity.getUnits()!=null) detail+=",\"units\":"+quote(quantity.getUnits().getSuffix());
+          }
+          displayers.add(detail+"}");
+        }
+        sceneDetails.add("{\"name\":"+quote(scene.getPresentationName())+",\"displayers\":"+displayers+"}");
+      }
+      StringJoiner fields = new StringJoiner(",", "[", "]");
+      for (FieldFunction field : allFields.values()) {
+        String reference = "null";
+        if (field instanceof star.flow.PressureCoefficientFunction) {
+          star.flow.PressureCoefficientFunction coefficient = (star.flow.PressureCoefficientFunction)field;
+          reference = "{\"densityKgM3\":" + coefficient.getReferenceDensity().getSIValue() +
+            ",\"velocityMS\":" + coefficient.getReferenceVelocity().getSIValue() +
+            ",\"pressurePa\":" + coefficient.getReferencePressure().getSIValue() + "}";
+        }
+        fields.add("{\"name\":" + quote(field.getPresentationName()) +
+          ",\"functionName\":" + quote(field.getFunctionName()) +
+          ",\"type\":" + quote(String.valueOf(field.getTypeAsEnum())) +
+          ",\"coefficientReference\":" + reference +
+          (magnitudeRoots.containsKey(field.getFunctionName()) ? ",\"magnitudeOf\":"+quote(magnitudeRoots.get(field.getFunctionName())) : "")+"}");
+      }
+      String body = "{\"schema\":\"cfd-review-star-inventory\",\"version\":1," +
+        "\"starVersion\":" + quote(sim.getReleaseNumber()) +
+        ",\"iteration\":" + iteration + ",\"regions\":" + regions +
+        ",\"boundaryDetails\":"+boundaryDetails+
+        ",\"representations\":" + names(sim.getRepresentationManager().getObjects()) +
+        ",\"representationDetails\":" + representationDetails +
+        ",\"derivedParts\":" + names(sim.getPartManager().getObjects()) +
+        ",\"derivedPartDetails\":"+derivedDetails+
+        ",\"scenes\":" + names(sim.getSceneManager().getObjects()) +
+        ",\"sceneDetails\":"+sceneDetails+
+        ",\"tables\":" + names(sim.getTableManager().getObjects()) +
+        ",\"fields\":" + fields + "}";
+      try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(output,"inventory.json")), StandardCharsets.UTF_8)) {
+        writer.write(body);
+      }
+      if (iteration != sim.getSimulationIterator().getCurrentIteration())
+        throw new IllegalStateException("Iteration changed during inventory");
+      try (Writer writer = new OutputStreamWriter(new FileOutputStream(new File(output,"complete.json")), StandardCharsets.UTF_8)) {
+        writer.write("{\"complete\":true,\"operation\":\"inspect\",\"iterationBefore\":" + iteration + ",\"iterationAfter\":" + iteration + "}");
+      }
+      sim.println("CFD_REVIEW_INVENTORY_COMPLETE");
+    } catch (Exception error) {
+      throw new RuntimeException("CFD Review inventory failed", error);
+    }
+  }
+}
