@@ -81,8 +81,8 @@ StarCapsule 是**所选结果的便携快照与审阅工具**。HTML 保存导�
 
 ## 作者与灵感
 
-**Designed by Symn**
+**Designed by Symn · Jilin University**
 
-**Inspired by the simulation and design-review workflows of JLU Racing GSmart.**
+**Inspired by the simulation and design-review workflows of Gsmart, part of JLU Racing at Jilin University.**
 
-灵感来自 JLU Racing GSmart 车队的仿真与设计评审工作流。
+灵感来自吉林大学 JLU Racing 旗下 Gsmart 吉智无人驾驶方程式车队的仿真与设计评审工作流。

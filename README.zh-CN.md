@@ -2,6 +2,10 @@
 
 把 STAR-CCM+ 仿真结果装进一个可携带、可交互、可离线打开的 HTML。
 
+作者 **Symn** · 学校 **Jilin University（吉林大学）**。
+
+[下载 Windows 安装包](https://github.com/symnyan9/StarCapsule/releases/tag/v0.3.1) · [版本发布](https://github.com/symnyan9/StarCapsule/releases) · [自动测试](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
+
 StarCapsule Studio 将已保存仿真中的所选几何、场值与后处理对象封装为三维审阅工作台。接收者无需安装 STAR、Python 或服务器，即可旋转模型、扫掠真实截面、读取源数据、对比工况并留下带观察状态的批注。
 
 同一个文件保留模型细节、场值、来源标识、模板与审阅设置。追加导入其他工况后，可以使用双视口联动，也可以将两个半模型放进同一画布；再次导出后，工况库与当前状态随文件一起保存，适合方案评审、技术答辩和结果交付。
@@ -10,9 +14,9 @@ StarCapsule Studio 将已保存仿真中的所选几何、场值与后处理对�
 
 [English](README.md) · [安装](docs/INSTALL.zh-CN.md) · [离线审阅与多工况操作](docs/REVIEW.zh-CN.md) · [STAR 导出说明](docs/STAR_ADAPTER.md) · [数据格式](docs/DATA_FORMAT.md) · [中文模板指南](docs/TEMPLATES.zh-CN.md) · [验收记录](docs/VALIDATION.md)
 
-![双工况合成示例](docs/images/studio.png)
+![基准与新鼻锥两个实车工况的同画布半车对比](docs/images/real-half-comparison.png)
 
-公开示例中的几何、标量和涡形管道均由数学公式生成，页面持续显示 DEMO。示例与车队车辆、真实仿真结果独立。
+上图为作者的基准与新鼻锥两个实车仿真工况，采用同画布半车拼接对照。可下载的示例文件继续使用标注 DEMO 的合成数据；真实仿真文件、车体网格与原始场值保留在本机。
 
 ## 核心价值
 
@@ -35,7 +39,7 @@ python run.py build case.json --language zh-CN --output review-zh.html
 
 ## 选择 SIM，直接导出 HTML
 
-Windows 64 位用户可使用完整包 `StarCapsule-Studio-0.3.0-Windows-x64.zip`：**完整解压 → 双击 Install.cmd → 打开桌面 StarCapsule Studio**。也可直接双击 `Launch.cmd` 运行。Python 和 Tk 已内置；读取 SIM 仍需本机安装兼容且有许可的 STAR-CCM+。
+Windows 64 位用户可使用完整包 `StarCapsule-Studio-0.3.1-Windows-x64.zip`：**完整解压 → 双击 Install.cmd → 打开桌面 StarCapsule Studio**。也可直接双击 `Launch.cmd` 运行。Python 和 Tk 已内置；读取 SIM 仍需本机安装兼容且有许可的 STAR-CCM+。
 
 源码目录双击 **Open Studio.cmd**，或运行：
 
@@ -139,7 +143,7 @@ python run.py upgrade old-review.html --output updated-review.html
 桌面界面需要 Python 3.10+ 及 Tkinter。使用已打包的 wheel 离线安装：
 
 ```powershell
-python -m pip install --no-index starcapsule_studio-0.3.0-py3-none-any.whl
+python -m pip install --no-index starcapsule_studio-0.3.1-py3-none-any.whl
 starcapsule-gui
 ```
 
@@ -149,12 +153,12 @@ starcapsule-gui
 
 当前原生 API 配置针对 **STAR-CCM+ 19.02.009**。实际导出、合成测试、打包验证及版本限制统一记录在[验收记录](docs/VALIDATION.md)。宏编译和演示页面通过，分别证明相应范围；它们不代表任意涡结构、模型尺寸或 STAR 版本均已完成真实验收。扫掠表示空间位置变化；未记录的瞬态历史无法由导出恢复。
 
-项目已整理为可上传 GitHub 的源码，实际发布仍是独立操作。原创代码采用 MIT 许可；Three.js 与 OrbitControls 保留原许可，STAR 软件及 Java 库由用户自行提供。
+源码、说明和安装包通过本仓库及 [Releases](https://github.com/symnyan9/StarCapsule/releases) 提供。原创代码采用 MIT 许可；Three.js 与 OrbitControls 保留原许可，STAR 软件及 Java 库由用户自行提供。
 
 ## 灵感与作者
 
-灵感来自 **JLU Racing GSmart** 车队的仿真与设计评审工作流。
+灵感来自吉林大学 **JLU Racing 旗下 Gsmart 吉智无人驾驶方程式车队** 的仿真与设计评审工作流。
 
-Inspired by the simulation and design-review workflows of **JLU Racing GSmart**.
+Inspired by the simulation and design-review workflows of **Gsmart, part of JLU Racing at Jilin University**.
 
-Designed by **Symn**.
+Designed by **Symn · Jilin University**.

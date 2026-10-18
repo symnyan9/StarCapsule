@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 — efficient large-model validation and publication preview
+
+- Skip translation-dictionary scans for empty/ASCII-only validation fragments while preserving authored Chinese text and punctuation conversion. This avoids repeated UI translation work when validating dense scientific arrays.
+- Add regression checks for all translation entries, punctuation handling, preserved source text and the absence of dictionary scans for repeated ASCII fragments.
+- Add an explicitly authorized rendered real-case half-model preview to the bilingual project pages. Interactive downloadable examples remain synthetic; no real simulation geometry or field arrays are distributed.
+- Credit Symn and Jilin University, and clarify the Gsmart / JLU Racing inspiration. Link installation downloads and record the initial hosted CI scope.
+
 ## 0.3.0 — English-first bilingual review
 
 - Default to English in the desktop exporter and offline HTML; switch to Simplified Chinese without losing selections, current jobs, views or source data. Desktop preferences persist locally; HTML/project files retain their selected language.

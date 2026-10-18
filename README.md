@@ -2,6 +2,10 @@
 
 **Your STAR-CCM+ results. One portable, interactive, offline HTML.**
 
+Created by **Symn · Jilin University**.
+
+[Download for Windows](https://github.com/symnyan9/StarCapsule/releases/tag/v0.3.1) · [Releases](https://github.com/symnyan9/StarCapsule/releases) · [![Checks](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml/badge.svg)](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
+
 [中文说明](README.zh-CN.md) · [Installation](docs/INSTALL.md) · [Review guide](docs/REVIEW.md) · [STAR adapter](docs/STAR_ADAPTER.md) · [Data format](docs/DATA_FORMAT.md) · [Templates](docs/TEMPLATES.md) · [Validation](docs/VALIDATION.md)
 
 StarCapsule Studio turns selected results from saved STAR-CCM+ simulations into a portable 3D workspace. Send a single HTML file: reviewers can rotate the model, sweep real exported sections, inspect source-valued picks, compare cases and record comments without installing STAR, Python or a server.
@@ -10,9 +14,9 @@ Keep geometry, scalar fields, source identities and review settings together. Ap
 
 Large data slots use lossless gzip with bounded Base64 chunks. Exported geometry and numeric precision are retained without automatic mesh reduction or rounding. Startup releases decoded data text and avoids repeated internal validation; same-canvas comparisons reuse unchanged arrays and store derived compositions as small recipes. Actual speed and capacity still depend on geometry density and the reviewing device. See the [validation record](docs/VALIDATION.md) for measured scope.
 
-![Two synthetic cases in the offline review application](docs/images/studio.png)
+![Two real vehicle CFD cases in a single half-model comparison](docs/images/real-half-comparison.png)
 
-The public examples are **synthetic demonstrations**, independent of any team vehicle or CFD result.
+The screenshot compares the author's real baseline and modified-nose vehicle cases on one canvas. Downloadable example files use **synthetic demonstrations**; the real source simulations, vehicle meshes and field datasets remain private.
 
 ## Why StarCapsule
 
@@ -35,7 +39,7 @@ python run.py build case.json --language zh-CN --output review-zh.html
 
 ## Select a SIM and export
 
-For Windows x64, use the complete `StarCapsule-Studio-0.3.0-Windows-x64.zip` release package. Extract the entire ZIP, then double-click **Install.cmd** and launch **StarCapsule Studio** from the desktop. **Launch.cmd** also runs the extracted package directly. Python and Tk are included; the native SIM export still requires your compatible, licensed STAR installation.
+For Windows x64, use the complete `StarCapsule-Studio-0.3.1-Windows-x64.zip` release package. Extract the entire ZIP, then double-click **Install.cmd** and launch **StarCapsule Studio** from the desktop. **Launch.cmd** also runs the extracted package directly. Python and Tk are included; the native SIM export still requires your compatible, licensed STAR installation.
 
 See the [installation guide](docs/INSTALL.md) for Chinese installer messages and portable use.
 
@@ -143,7 +147,7 @@ python run.py upgrade old-review.html --output updated-review.html
 Use Python 3.10+ with Tkinter for the desktop interface. Install a supplied wheel without a package index:
 
 ```powershell
-python -m pip install --no-index starcapsule_studio-0.3.0-py3-none-any.whl
+python -m pip install --no-index starcapsule_studio-0.3.1-py3-none-any.whl
 starcapsule-gui
 ```
 
@@ -164,13 +168,13 @@ python tools/check_studio.py --html demo-check.html --output checks/browser
 python tools/check_language.py --output checks/language
 ```
 
-Python handles validation, packing, the native desktop workflow and report generation; plain JavaScript/Three.js handles review, and Java macros bridge STAR. See [Contributing](CONTRIBUTING.md). The repository is prepared for GitHub publication; local preparation does not publish it.
+Python handles validation, packing, the native desktop workflow and report generation; plain JavaScript/Three.js handles review, and Java macros bridge STAR. See [Contributing](CONTRIBUTING.md). Source code, documentation and downloadable packages are available in this repository and its [Releases](https://github.com/symnyan9/StarCapsule/releases).
 
 ## Inspiration
 
-Inspired by the simulation and design-review workflows of **JLU Racing GSmart**.
+Inspired by the simulation and design-review workflows of **Gsmart, part of JLU Racing at Jilin University**.
 
-Designed by **Symn**.
+Designed by **Symn · Jilin University**.
 
 ## License
 

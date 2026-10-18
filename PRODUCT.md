@@ -48,6 +48,6 @@ English is the default for the native exporter and generated viewer; Simplified 
 - Preserve the existing project when an import fails.
 - Export a readable offline artifact with the data and dependencies included.
 
-## Open decisions
+## Project identity
 
-The local release uses MIT for original code. A public repository URL and publication remain pending. The professional neutral engineering Operate layout is an implementation choice inferred from this task, rather than an independently approved brand identity.
+The local release uses MIT for original code. The public repository is https://github.com/symnyan9/StarCapsule; publication was explicitly authorized by the author. The professional neutral engineering Operate layout is an implementation choice inferred from this task, rather than an independently approved brand identity.

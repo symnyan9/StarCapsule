@@ -4,7 +4,7 @@
 
 ## Complete Windows x64 package
 
-1. Download the `StarCapsule-Studio-0.3.0-Windows-x64.zip` release asset and extract the **entire** archive.
+1. Download the `StarCapsule-Studio-0.3.1-Windows-x64.zip` release asset and extract the **entire** archive.
 2. Double-click **Install.cmd**. The included Python/Tk runtime requires no separate Python installation or administrator account.
 3. Open **StarCapsule Studio** from the desktop shortcut. You can also run **Launch.cmd** directly in the extracted folder for portable use.
 
@@ -21,7 +21,7 @@ The application and new reports default to English; select **简体中文** in t
 Python 3.10+ is required; the desktop interface also needs Tkinter. From a source checkout, run `python run.py gui` or use **Open Studio.cmd**. For a wheel, install offline:
 
 ```powershell
-python -m pip install --no-index starcapsule_studio-0.3.0-py3-none-any.whl
+python -m pip install --no-index starcapsule_studio-0.3.1-py3-none-any.whl
 starcapsule-gui
 ```
 

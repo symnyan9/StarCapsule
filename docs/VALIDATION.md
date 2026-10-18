@@ -2,13 +2,26 @@
 
 Local acceptance date: 2026-10-18. Public fixtures are generated mathematics, independent of any team vehicle or solver result. Private simulation files, exports and detailed run receipts are kept outside the repository.
 
+
+## GitHub publication checks — 2026-10-19
+
+The [initial hosted CI run](https://github.com/symnyan9/StarCapsule/actions/runs/39144266674) passed all four jobs for commit `44b204f8cd24d3e4b741c95dbac783fe20571ae8`. Python 3.10, 3.12 and 3.14 each reported **173 tests with two GUI classes skipped** because the Linux runner had no graphical display. The hosted browser completed **50 functional checks and 15 language checks**, with no page errors or external requests. These hosted results are distinct from the complete native Windows checks below.
+
+The README's real-car image is an author-approved rendered preview of the baseline/modified-nose half-model comparison. It is a screenshot, not a downloadable real-data fixture; public example HTML/JSON continues to use procedural synthetic data. No real simulation, vehicle mesh or raw scientific arrays are published.
+
+## 0.3.1 large-model translation fast path
+
+The final source passed **201 tests on Python 3.10.5 and 3.14.2**, with no failures, errors or skips. Two new checks compare all authored translation entries/punctuation against the original behavior and confirm that repeated empty/ASCII mesh-validation fragments perform no translation-dictionary splitting. Relevant browser checks passed **32 language checks and 50 general functional checks**, with no browser errors or external requests.
+
+A private Node microbenchmark of 3000 repeated validation messages measured 280.29 ms without the guard and 9.01 ms with it. This is a translator microbenchmark, not an end-to-end model-loading speed claim. The actual two-case report was also loaded and rendered with the final production engine to capture the real-case preview. All 508 scientific arrays retained their identities, a dual-stream check covered 111,554,375 numeric values, and the original source HTML retained its hash, size and modification time. Q layers and the shared edge section were hidden for screenshot readability; geometry and values were not reduced or rewritten. No STAR process was started for this check.
+
 ## 0.3.0 English-first bilingual interface
 
 The complete Python suite passed **199 tests on Python 3.10.5 and 3.14.2**, with no failures, errors or skips. Language checks cover default English, remembered desktop preferences, in-place widget updates, export-language propagation, strict language validation and preservation of scientific data/source names. Existing Node validation fixtures load the real shared translator while retaining their numerical, security and transparency assertions.
 
 Synthetic offline browser checks passed **206 checks**: general review 50, default-template language 15, Engineering Blue language 17, compression 28, mirror 23, low-copy memory 21, layout/import 28 and half-model comparison 24. Language switching retains viewer/geometry/numeric-array identities without `structuredClone`, camera and scientific settings, user text, source labels and comments. Saving/reopening retains Chinese or English. The browser runs reported no page errors or external requests.
 
-English browser layouts were inspected at 1280 and 1440 px without horizontal page overflow. The public 1920 × 1080 screenshot uses mathematical demo cases only. Native Tk screenshots were inspected at **1280 × 850** in both languages and both object tabs. A shorter English hint removed a 12 px section-panel clip; all four final states retain visible language controls, export actions and the complete region list. The affected desktop/language checks passed **44 tests** after that copy refinement.
+English browser layouts were inspected at 1280 and 1440 px without horizontal page overflow. The original screenshot at `docs/images/studio.png` uses mathematical demo cases only. Native Tk screenshots were inspected at **1280 × 850** in both languages and both object tabs. A shorter English hint removed a 12 px section-panel clip; all four final states retain visible language controls, export actions and the complete region list. The affected desktop/language checks passed **44 tests** after that copy refinement.
 
 This release's checks exercised synthetic data, mocked native adapters and real local Tk/browser interfaces. No STAR process was started for the language changes; earlier real-SIM and native-version acceptance below retains its original scope. English and Chinese install/review/template guides are included. Public source and portable-runtime release verification remains distinct from publication; no hosted GitHub CI or public release is implied by local checks.
 

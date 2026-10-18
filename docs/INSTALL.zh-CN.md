@@ -4,7 +4,7 @@
 
 ## Windows x64 完整包
 
-1. 下载 `StarCapsule-Studio-0.3.0-Windows-x64.zip`，将压缩包**完整解压**。
+1. 下载 `StarCapsule-Studio-0.3.1-Windows-x64.zip`，将压缩包**完整解压**。
 2. 双击 **Install.cmd**。包内包含 Python/Tk，无需另装 Python，也无需管理员权限。
 3. 从桌面 **StarCapsule Studio** 快捷方式启动。也可直接双击解压目录内 **Launch.cmd** 便携运行。
 
@@ -21,7 +21,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1 -Language zh-C
 需要 Python 3.10+，桌面界面还需要 Tkinter。源码目录可运行 `python run.py gui` 或双击 **Open Studio.cmd**。wheel 可离线安装：
 
 ```powershell
-python -m pip install --no-index starcapsule_studio-0.3.0-py3-none-any.whl
+python -m pip install --no-index starcapsule_studio-0.3.1-py3-none-any.whl
 starcapsule-gui
 ```
 

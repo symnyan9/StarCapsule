@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "starcapsule-studio"
-version = "0.3.0"
+version = "0.3.1"
 description = "Portable offline STAR-CCM+ results for interactive 3D review"
 readme = "README.md"
 requires-python = ">=3.10"
