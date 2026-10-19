@@ -16,6 +16,12 @@ from cfd_review.demo import make_demo_project
 from cfd_review.report import build_report, load_report_document
 
 
+def reveal(locator):
+    """Language selection lives in the native More menu."""
+    locator.evaluate("node=>{for(let p=node.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;}")
+    return locator
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -69,19 +75,19 @@ def main():
               window.qaGeometry=CFDStudio.viewers.map(v=>v.meshes[0].geometry);window.qaClone=structuredClone;window.qaClones=0;
               window.structuredClone=(...args)=>{window.qaClones++;return window.qaClone(...args);};
             }""")
-            page.select_option('[data-control="language"]', "zh-CN")
+            reveal(page.locator('[data-control="language"]')).select_option("zh-CN")
             check("Chinese selector updates controls and dynamic labels", page.locator('[data-action="export-html"]').inner_text() == "导出 HTML" and page.locator('[data-fv="section-range-label"]').first.inner_text() == "截面 复位色标")
             check("language switch preserves views and scientific array identity", page.evaluate("""()=>qaViewers.every((v,i)=>v===CFDStudio.viewers[i]&&v.meshes[0].geometry===qaGeometry[i])&&qaArrays.every((a,i)=>a===CFDStudio.project.cases[i].data.parts[0].positions)&&qaSignature(CFDStudio.viewers.map(v=>v.getState()))===qaStates&&JSON.stringify(CFDStudio.project.cases)===qaData&&qaClones===0"""))
             check("user text, source labels and names stay literal", page.evaluate("""()=>document.querySelector('.studio-note>p').textContent==='复位'&&document.querySelector('[data-control="note-text"]').value==='Pending user text / 用户文字'&&document.querySelector('[data-control="case"] option').textContent==='工况'&&document.querySelector('[data-fv="parts"] span').textContent==='复位'&&document.querySelector('[data-fv="layers"] .fv-inline span').textContent==='色标'&&document.querySelector('[data-fv="variable"] option[value="Cp"]').textContent==='复位'&&document.querySelector('[data-fv="source"]').textContent.startsWith('来源：色标。')&&document.querySelector('.fv-pick-name').textContent==='批注保存读数 · 复位'"""))
             if args.template:
                 check("Engineering Blue outer shell switches to Chinese", page.locator('.review-template-heading h1').inner_text() == "三维仿真审阅" and page.locator('.review-template-caption').inner_text() == "表面与真实截面 · 工况对比 · 离线报告")
-            page.select_option('[data-control="language"]', "en")
+            reveal(page.locator('[data-control="language"]')).select_option("en")
             if args.template:
                 check("Engineering Blue outer shell returns to English", page.locator('.review-template-heading h1').inner_text() == "3D Simulation Review" and page.locator('.review-template-footer').inner_text() == "Source data and display settings stay separate · Color limits preserve source values")
             check("English switch restores static and dynamic labels", page.locator('[data-action="export-html"]').inner_text() == "Export HTML" and page.locator('[data-fv="section-range-label"]').first.inner_text() == "Section 复位 color scale")
             check("English switch preserves scientific state and avoids cloning", page.evaluate("qaSignature(CFDStudio.viewers.map(v=>v.getState()))===qaStates&&JSON.stringify(CFDStudio.project.cases)===qaData&&qaClones===0"))
             check("English error text", page.evaluate("""()=>{try{CFDStudio.setLanguage('invalid')}catch(e){return e.message==='Project language must be en or zh-CN'}}"""))
-            page.select_option('[data-control="language"]', "zh-CN")
+            reveal(page.locator('[data-control="language"]')).select_option("zh-CN")
             check("Chinese error text", page.evaluate("""()=>{try{CFDStudio.setLanguage('invalid')}catch(e){return e.message==='工程语言须为 en 或 zh-CN'}}"""))
             page.evaluate("window.structuredClone=window.qaClone")
             with page.expect_download() as download:
@@ -95,7 +101,7 @@ def main():
             page = open_page(context, saved)
             check("reopened report restores Chinese", page.locator('[data-action="export-html"]').inner_text() == "导出 HTML" and page.locator('[data-control="language"]').input_value() == "zh-CN")
             check("reopened report retains camera, color, mirror and note", page.evaluate("""()=>{const s=CFDStudio.viewers[0].getState();return s.variable==='Cp'&&s.sectionIndex===3&&s.mirrorDisplay===false&&s.colorRanges.section.Cp[0]===-1.2&&s.layerSettings[CFDStudio.viewers[0].layers[0].id].opacity===.35&&CFDStudio.project.notes[0].text==='复位'}"""))
-            page.select_option('[data-control="language"]', "en")
+            reveal(page.locator('[data-control="language"]')).select_option("en")
             check("reopened report can switch to English", page.locator('[data-action="export-html"]').inner_text() == "Export HTML")
             check("no browser errors or network requests", not receipt["errors"] and not receipt["network"])
             browser.close()

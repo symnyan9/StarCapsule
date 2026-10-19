@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0 — offline tablet review and on-demand results (prerelease)
+
+- Adapt one self-contained HTML to desktop and tablet review, automatically or through the More menu. Add touch rotation/zoom/pan, tap picking, settings/catalog drawers, a mobile single-canvas default and retained desktop comparison states.
+- Split large reports into independently embedded surface cores, real sections and eligible additional layers. Load selected content on demand, cache at most two decoded sections per resident case, and release hidden layer GPU resources and decoded working copies. Keep original meshes, field precision and source attribution.
+- Present computer-composed half-model comparisons under one camera on a tablet. Keep both original cases, common real-X sections, comments and review settings when saving offline HTML.
+- Bundle pako 2.2.0 inflate as an offline fallback when native gzip decoding is unavailable. Prefer native decoding and retain decoded-byte limits, strict UTF-8 and gzip CRC32/size checks. Edited slots may save as larger plain JSON without native compression; unvisited packed v2 slots stay compressed.
+- Merge project/comparison actions into one header and case selection into the camera toolbar. Keep picked values in a highlighted canvas overlay; put project details, language, review mode and project JSON save in More. Preserve usable touch targets and accessible menus.
+- Show task status during local reads, decompression, model/layer preparation and HTML packaging. Show measured decoded bytes where available; keep other phases indeterminate.
+- Explain A/B synchronization, disable its controls with one live view without changing saved preferences, and fix the asynchronous feedback guard during rapid linked section changes. Expand the orbit distance limit when explicitly fitting a large section.
+- Preserve signed zero when upgrading older browser reports and saving new plain or packed slots. Retain previous report formats, desktop functionality and legacy command aliases.
+
+This is a prerelease with automated desktop/tablet-touch coverage. A user screenshot shows a report rendering in HTML Viewer Q on iPadOS 16.3.1; full physical iPad/Safari qualification and universal mobile capacity are not established. Existing HTML must be upgraded or replaced to receive the new viewer. Multi-case import, comparison/stitching, editable color limits, comments, themes, bilingual UI and lossless gzip predate this release. See the [bilingual release notes](docs/RELEASE_NOTES_0.4.0.md).
+
 ## 0.3.1 — efficient large-model validation and publication preview
 
 - Skip translation-dictionary scans for empty/ASCII-only validation fragments while preserving authored Chinese text and punctuation conversion. This avoids repeated UI translation work when validating dense scientific arrays.

@@ -468,6 +468,8 @@ def validate_project(obj):
             _fail("project.ui.sidebarCollapsed", "expected true/false")
         if "language" in ui and ui["language"] not in ("en", "zh-CN"):
             _fail("project.ui.language", "expected en or zh-CN")
+        if "mobileMode" in ui and ui["mobileMode"] not in ("auto", "on", "off"):
+            _fail("project.ui.mobileMode", "expected auto, on or off")
     cases = _array(obj.get("cases"), "project.cases")
     if not 1 <= len(cases) <= 32:
         _fail("project.cases", "expected 1 to 32 cases")

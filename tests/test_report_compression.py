@@ -64,6 +64,23 @@ class ReportCompressionTests(unittest.TestCase):
         self.assertEqual(self.primary()["schema"], "cfd-review-compressed")
         self.assertEqual(load_report_document(self.path), self.project)
 
+    def test_legacy_integer_spelling_of_negative_zero_survives_upgrade(self):
+        raw = _json_payload(self.project).replace('"cp":[-0.0,', '"cp":[-0,').encode("utf-8")
+        self.assertIn(b'"cp":[-0,', raw)
+        for compressed in (False, True):
+            with self.subTest(compressed=compressed):
+                if compressed:
+                    self.write_slot(envelope(raw))
+                else:
+                    self.path.write_bytes(b'<script id="cfd-project-data" type="application/json">' + raw + b'</script>')
+                upgraded = Path(self.temp.name) / f"signed-zero-{compressed}.html"
+                upgrade_report(self.path, upgraded)
+                for result in (load_report_document(self.path), load_report_document(upgraded)):
+                    wall = result["cases"][0]["data"]["parts"][0]
+                    self.assertEqual(math.copysign(1, wall["cp"][0]), -1)
+                    self.assertEqual(wall["cp"][1:], self.project["cases"][0]["data"]["parts"][0]["cp"][1:])
+                    self.assertTrue(all(type(index) is int for index in wall["indices"]))
+
     def test_small_legacy_document_stays_plain_and_streamed_json_matches_legacy_text(self):
         self.assertEqual("".join(_json_fragments(self.project)), _json_payload(self.project))
         build_report(self.project, self.path)

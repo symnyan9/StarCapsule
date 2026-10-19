@@ -1,0 +1,37 @@
+{
+  "name": "pako",
+  "version": "2.2.0",
+  "license": "MIT AND Zlib",
+  "bundle": "unmodified upstream inflate-only ES5 build",
+  "sources": [
+    {
+      "file": "pako_inflate.es5.min.js",
+      "url": "https://raw.githubusercontent.com/nodeca/pako/2.2.0/dist/pako_inflate.es5.min.js",
+      "bytes": 21895,
+      "sha256": "9fbdec3706bb739d174448a0a8c6e870f9d51255a00a39be410e4eb6fbf5e297"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nodeca/pako/2.2.0/LICENSE",
+      "bytes": 1104,
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
+      "upstreamPath": "LICENSE",
+      "storedIn": "PAKO_LICENSE.txt"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nodeca/pako/2.2.0/lib/zlib/README",
+      "bytes": 2180,
+      "sha256": "20356aece8f36fda34645e97af3b163da0a88e253b78ffba298590d5b9121ebb",
+      "upstreamPath": "lib/zlib/README",
+      "storedIn": "PAKO_LICENSE.txt"
+    }
+  ],
+  "combinedLicense": {
+    "file": "PAKO_LICENSE.txt",
+    "parts": [
+      "LICENSE",
+      "lib/zlib/README"
+    ],
+    "bytes": 3286,
+    "sha256": "514746a9e1bf68b1b2906949dd31884b600fd1654e7cc04bd3bbbf8152b4003c"
+  }
+}

@@ -14,6 +14,12 @@ import traceback
 from playwright.sync_api import sync_playwright
 
 
+def reveal(locator):
+    """Open native ancestor menus before exercising their real form control."""
+    locator.evaluate("node=>{for(let p=node.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;}")
+    return locator
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--html", required=True, type=Path)
@@ -153,7 +159,7 @@ def main():
               const stopped=a.sectionIndex;await new Promise(r=>setTimeout(r,250));test('pause stops sweep',a.sectionIndex===stopped);a.setSection=original;
               const id=a.data.layers[0].id,before=b.getState().layerSettings;
               const toggle=a.root.querySelector('[data-layer]');toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
-              test('isosurface hides independently',a.getState().layerSettings[id].visible===false&&!a.layers[0].mesh.visible&&same(before,b.getState().layerSettings));
+              test('isosurface hides independently',a.getState().layerSettings[id].visible===false&&!a.layers[0].mesh&&same(before,b.getState().layerSettings));
               toggle.checked=true;toggle.dispatchEvent(new Event('change',{bubbles:true}));
               const opacity=a.root.querySelector('[data-layer-opacity]');opacity.value='0.35';opacity.dispatchEvent(new Event('input',{bubbles:true}));
               test('isosurface opacity remains independent',Math.abs(a.getState().layerSettings[id].opacity-.35)<1e-6&&Math.abs(a.layers[0].mesh.material.opacity-.35)<1e-6&&same(before,b.getState().layerSettings));
@@ -193,10 +199,10 @@ def main():
             }"""))
 
             title = 'Offline comparison <审阅> & "DEMO"'
-            page.locator('[data-control="project-title"]').fill(title)
+            reveal(page.locator('[data-control="project-title"]')).fill(title)
             page.locator('[data-control="project-title"]').dispatch_event("change")
             renamed = "合成方案 A — edited"
-            view0.locator('[data-control="case-name"]').fill(renamed)
+            reveal(view0.locator('[data-control="case-name"]')).fill(renamed)
             view0.locator('[data-control="case-name"]').dispatch_event("change")
             record("title and case name are editable", page.evaluate("""expected=>{
               const p=CFDStudio.exportProject();return p.title===expected.title&&p.cases.find(c=>c.id===p.views[0].caseId).name===expected.name;
@@ -212,7 +218,7 @@ def main():
             record("native file import adds another independent case", page.evaluate("CFDStudio.project.cases.at(-1).name==='Imported synthetic case'"))
 
             with page.expect_download() as download_info:
-                page.locator('[data-action="export-project"]').click()
+                reveal(page.locator('[data-action="export-project"]')).click()
             project_path = out / "roundtrip-project.json"
             download_info.value.save_as(str(project_path))
             expected = json.loads(project_path.read_text(encoding="utf-8"))
@@ -290,9 +296,10 @@ def main():
             refusal = page.locator("#studio-message").inner_text()
             receipt["sim_refusal"] = {"project_preserved": source_preserved, "message": refusal}
             record("browser SIM refusal keeps project and explains local exporter", source_preserved
-                   and "STAR" in refusal and "不直接解析" in refusal
-                   and ("桌面" in refusal or "CLI" in refusal)
-                   and "导出" in refusal and ("HTML" in refusal or "case.json" in refusal))
+                   and "STAR" in refusal
+                   and (("不直接解析" in refusal and "导出" in refusal and ("桌面" in refusal or "CLI" in refusal))
+                        or ("do not parse" in refusal and "Export" in refusal and "desktop" in refusal))
+                   and ("HTML" in refusal or "case.json" in refusal))
 
             full_screen = page.locator('.studio-view[data-view="0"] [data-action="fullscreen"]')
             full_screen.click()

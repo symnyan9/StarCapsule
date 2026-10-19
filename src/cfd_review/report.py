@@ -24,12 +24,102 @@ from .templates import CSP, validate_template
 _MAX_REPORT_BYTES = 2 * 1024 * 1024 * 1024
 _MAX_JSON_SLOT_BYTES = 500 * 1024 * 1024
 _BUNDLE_THRESHOLD_BYTES = 64 * 1024 * 1024
+_SECTION_BUNDLE_THRESHOLD_BYTES = 8 * 1024 * 1024
 _MAX_REPORT_CASES = 32
+_MAX_REPORT_SECTIONS = 10000
+_MAX_REPORT_LAYERS = 1000
+_MAX_DATA_SLOTS = _MAX_REPORT_CASES * (_MAX_REPORT_SECTIONS + _MAX_REPORT_LAYERS) + _MAX_REPORT_CASES + 1
 _READ_CHUNK_BYTES = 1024 * 1024
 _MAX_COMPOSITION_RECIPE_BYTES = 1024 * 1024
 _COMPRESSION_THRESHOLD_BYTES = 1024 * 1024
+_SECTION_COMPRESSION_THRESHOLD_BYTES = 64 * 1024
 _BASE64_CHUNK_CHARS = 1024 * 1024
 _BASE64_INPUT_BYTES = (_BASE64_CHUNK_CHARS // 4) * 3
+
+
+def _case_summary(case):
+    """Small navigation metadata; scientific arrays remain in their own slots."""
+    data = case.get("data")
+    if not isinstance(data, dict):
+        raise ValueError("Invalid report case core")
+    summary = {"name": case.get("name"), "meta": data.get("meta")}
+    for kind in ("parts", "layers"):
+        meshes = data.get(kind, [])
+        if not isinstance(meshes, list) or any(not isinstance(mesh, dict) for mesh in meshes):
+            raise ValueError("Invalid report case-summary mesh metadata")
+        summary[kind] = [
+            {**{key: value for key, value in mesh.items()
+                if key not in ("positions", "indices", "cp", "cpt", "values")},
+             "fields": [field for field in ("cp", "cpt", "values") if field in mesh]}
+            for mesh in meshes
+        ]
+    return summary
+
+
+def _mesh_numeric_values(mesh):
+    if not isinstance(mesh, dict) or any(not isinstance(mesh[field], list)
+                                        for field in ("positions", "indices", "cp", "cpt", "values") if field in mesh):
+        raise ValueError("Invalid report mesh numeric arrays")
+    return sum(len(mesh[field]) for field in ("positions", "indices", "cp", "cpt", "values") if field in mesh)
+
+
+def _core_numeric_values(case):
+    if any(not isinstance(case["data"].get(kind, []), list) for kind in ("parts", "layers")):
+        raise ValueError("Invalid report core meshes")
+    return sum(_mesh_numeric_values(mesh) for kind in ("parts", "layers")
+               for mesh in case["data"].get(kind, []))
+
+
+def _decoded_json_bytes(value):
+    return sum(len(fragment.encode("utf-8")) for fragment in _json_fragments(value))
+
+
+def _section_reference(section, case_index, section_index, *, decoded_bytes=None):
+    """Describe exactly one stored X plane without copying any numeric array."""
+    if (not isinstance(section, dict) or not isinstance(section.get("positions"), list)
+            or not isinstance(section.get("indices"), list)
+            or any(not isinstance(section[field], list) for field in ("cp", "cpt") if field in section)):
+        raise ValueError("Invalid report section payload")
+    reference = {"elementId": f"cfd-section-data-{case_index}-{section_index}",
+                 "x": section.get("x"), "fields": [field for field in ("cp", "cpt") if field in section],
+                 "vertexCount": len(section["positions"]) // 3, "indexCount": len(section["indices"]),
+                 "decodedBytes": _decoded_json_bytes(section) if decoded_bytes is None else decoded_bytes,
+                 "numericValues": sum(len(section[field]) for field in ("positions", "indices", "cp", "cpt") if field in section)}
+    if "comparisonRanges" in section:
+        reference["comparisonRanges"] = section["comparisonRanges"]
+    return reference
+
+
+def _layer_reference(layer, case_index, layer_index, *, decoded_bytes=None):
+    return {"elementId": f"cfd-layer-data-{case_index}-{layer_index}",
+            "decodedBytes": _decoded_json_bytes(layer) if decoded_bytes is None else decoded_bytes,
+            "numericValues": _mesh_numeric_values(layer)}
+
+
+def _lazy_case_parts(case):
+    data = case["data"]
+    layers = data.get("layers", []) if data.get("parts") else []
+    core = {**case, "data": {**data, "sections": [], **({"layers": []} if layers else {})}}
+    return core, data["sections"], layers
+
+
+def _check_slot_budget(reference, decoded_bytes, numeric_values):
+    for name, actual in (("decodedBytes", decoded_bytes), ("numericValues", numeric_values)):
+        if name in reference and (type(reference[name]) is not int or reference[name] != actual):
+            raise ValueError(f"Report slot {name} differs from its source payload")
+
+
+def _same_json(left, right):
+    """Match JSON metadata with browser number semantics; booleans stay distinct."""
+    if type(left) in (int, float) and type(right) in (int, float):
+        return left == right
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return left.keys() == right.keys() and all(_same_json(left[key], right[key]) for key in left)
+    if isinstance(left, list):
+        return len(left) == len(right) and all(_same_json(a, b) for a, b in zip(left, right))
+    return left == right
 
 
 def _composition_budget_case(recipe, sources):
@@ -151,7 +241,10 @@ def _strict_json(stream):
     def constant(value):
         raise ValueError(f"non-finite JSON constant: {value}")
 
-    return json.load(stream, object_pairs_hook=pairs, parse_constant=constant)
+    # Older browser exports wrote signed zero as the valid JSON token -0.
+    # Python otherwise parses it as integer 0, discarding its IEEE sign.
+    return json.load(stream, object_pairs_hook=pairs, parse_constant=constant,
+                     parse_int=lambda token: -0.0 if token == "-0" else int(token))
 
 
 def _decompress_document(envelope):
@@ -207,6 +300,7 @@ class _ProjectDataParser(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=False)
         self.documents = {}
+        self.document_bytes = {}
         self.seen = set()
         self.active = None
         self.spool = None
@@ -215,14 +309,28 @@ class _ProjectDataParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
         identifier = attributes.get("id", "")
-        if identifier != "cfd-project-data" and not identifier.startswith("cfd-case-data-"):
+        if (identifier != "cfd-project-data" and not identifier.startswith("cfd-case-data-")
+                and not identifier.startswith("cfd-section-data-") and not identifier.startswith("cfd-layer-data-")):
             return
         if identifier in self.seen:
             raise ValueError(f"Report contains duplicate {identifier} elements")
-        if identifier != "cfd-project-data" and not re.fullmatch(r"cfd-case-data-(0|[1-9][0-9]*)", identifier):
-            raise ValueError("Invalid report case-data element ID")
-        if len(self.seen) >= _MAX_REPORT_CASES + 1:
-            raise ValueError("Report exceeds the 32-case bundle limit")
+        if identifier != "cfd-project-data":
+            case_match = re.fullmatch(r"cfd-case-data-(0|[1-9][0-9]*)", identifier)
+            section_match = re.fullmatch(r"cfd-section-data-(0|[1-9][0-9]*)-(0|[1-9][0-9]*)", identifier)
+            layer_match = re.fullmatch(r"cfd-layer-data-(0|[1-9][0-9]*)-(0|[1-9][0-9]*)", identifier)
+            if case_match:
+                if int(case_match[1]) >= _MAX_REPORT_CASES:
+                    raise ValueError("Report exceeds the 32-case bundle limit")
+            elif section_match:
+                if int(section_match[1]) >= _MAX_REPORT_CASES or int(section_match[2]) >= _MAX_REPORT_SECTIONS:
+                    raise ValueError("Report section-data index exceeds the 32-case / 10000-section limit")
+            elif layer_match:
+                if int(layer_match[1]) >= _MAX_REPORT_CASES or int(layer_match[2]) >= _MAX_REPORT_LAYERS:
+                    raise ValueError("Report layer-data index exceeds the 32-case / 1000-layer limit")
+            else:
+                raise ValueError("Invalid report case-data, section-data or layer-data element ID")
+        if len(self.seen) >= _MAX_DATA_SLOTS:
+            raise ValueError("Report exceeds the bounded data-slot limit")
         if (tag != "script" or attributes.get("type", "").strip().lower() != "application/json"
                 or "src" in attributes or len(attrs) != len(attributes)):
             raise ValueError("Report data must be one inline application/json script with id cfd-project-data")
@@ -233,7 +341,8 @@ class _ProjectDataParser(HTMLParser):
 
     def handle_startendtag(self, tag, attrs):
         identifier = dict(attrs).get("id", "")
-        if identifier == "cfd-project-data" or identifier.startswith("cfd-case-data-"):
+        if (identifier == "cfd-project-data" or identifier.startswith("cfd-case-data-")
+                or identifier.startswith("cfd-section-data-") or identifier.startswith("cfd-layer-data-")):
             raise ValueError("Report project-data script must have an explicit closing tag")
 
     def handle_data(self, data):
@@ -255,6 +364,7 @@ class _ProjectDataParser(HTMLParser):
                         and decoded_bytes > _MAX_COMPOSITION_RECIPE_BYTES):
                     raise ValueError("Composition recipe exceeds the 1 MiB input limit")
                 self.documents[self.active] = document
+                self.document_bytes[self.active] = decoded_bytes
             finally:
                 self.spool.close()
                 self.spool = None
@@ -292,21 +402,91 @@ class _ProjectDataParser(HTMLParser):
             references = root.get("cases")
             project = root.get("project")
             if (set(root) != {"schema", "version", "project", "cases"} or type(root.get("version")) is not int
-                    or root["version"] != 1 or not isinstance(project, dict) or "cases" in project
+                    or root["version"] not in (1, 2) or not isinstance(project, dict) or "cases" in project
                     or not isinstance(references, list) or not 1 <= len(references) <= _MAX_REPORT_CASES):
-                raise ValueError("Invalid cfd-review-html-bundle version 1 manifest")
+                raise ValueError("Invalid cfd-review-html-bundle version 1/2 manifest")
             cases = []
+            expected_slots = {"cfd-project-data"}
             for index, reference in enumerate(references):
                 expected_id = f"cfd-case-data-{index}"
-                if (not isinstance(reference, dict) or set(reference) != {"id", "elementId"}
+                if (not isinstance(reference, dict)
                         or reference.get("elementId") != expected_id):
                     raise ValueError("Invalid report case-data reference")
                 case = self.documents.get(expected_id)
                 if not isinstance(case, dict) or case.get("id") != reference.get("id"):
                     raise ValueError("Report case-data ID differs from its manifest or is missing")
+                expected_slots.add(expected_id)
+                recipe = case.get("schema") == "cfd-review-composition"
+                if root["version"] == 1 or recipe:
+                    if set(reference) != {"id", "elementId"}:
+                        raise ValueError("Invalid report case-data reference")
+                else:
+                    required = {"id", "elementId", "summary", "sections"}
+                    if (not required <= set(reference)
+                            or set(reference) - required - {"decodedBytes", "numericValues", "layerSlots"}
+                            or case.get("schema") != "cfd-review-case"
+                            or not isinstance(case.get("data"), dict)
+                            or case["data"].get("sections") != []
+                            or not isinstance(reference["sections"], list)
+                            or len(reference["sections"]) > _MAX_REPORT_SECTIONS):
+                        raise ValueError("Invalid version 2 case core or section references")
+                    _check_slot_budget(reference, self.document_bytes[expected_id], _core_numeric_values(case))
+                    layer_references = reference.get("layerSlots", [])
+                    if (not isinstance(layer_references, list) or len(layer_references) > _MAX_REPORT_LAYERS
+                            or ("layerSlots" in reference and (not case["data"].get("parts") or case["data"].get("layers") != []))):
+                        raise ValueError("Invalid version 2 layer references or case core")
+                    decoded_bytes = (self.document_bytes[expected_id] + max(0, len(reference["sections"]) - 1)
+                                     + max(0, len(layer_references) - 1))
+                    layers = []
+                    for layer_index, layer_reference in enumerate(layer_references):
+                        layer_id = f"cfd-layer-data-{index}-{layer_index}"
+                        if (not isinstance(layer_reference, dict) or layer_reference.get("elementId") != layer_id
+                                or set(layer_reference) != {"elementId", "decodedBytes", "numericValues"}):
+                            raise ValueError("Invalid report layer-data reference or order")
+                        _json_guard(layer_reference)
+                        layer = self.documents.get(layer_id)
+                        if not isinstance(layer, dict):
+                            raise ValueError("Report layer-data slot is missing")
+                        _check_slot_budget(layer_reference, self.document_bytes[layer_id], _mesh_numeric_values(layer))
+                        expected_slots.add(layer_id)
+                        decoded_bytes += self.document_bytes[layer_id]
+                        if decoded_bytes > _MAX_JSON_SLOT_BYTES:
+                            raise ValueError("Report case core and sections exceed the 500 MiB input limit (including layers)")
+                        layers.append(layer)
+                    if "layerSlots" in reference:
+                        case["data"]["layers"] = layers
+                    _json_guard(reference["summary"])
+                    if not _same_json(reference["summary"], _case_summary(case)):
+                        raise ValueError("Report case summary differs from its case core")
+                    sections = []
+                    for section_index, section_reference in enumerate(reference["sections"]):
+                        section_id = f"cfd-section-data-{index}-{section_index}"
+                        if (not isinstance(section_reference, dict)
+                                or section_reference.get("elementId") != section_id):
+                            raise ValueError("Invalid report section-data reference or order")
+                        _json_guard(section_reference)
+                        section = self.documents.get(section_id)
+                        if not isinstance(section, dict):
+                            raise ValueError("Report section-data slot is missing")
+                        expected = _section_reference(section, index, section_index,
+                                                      decoded_bytes=self.document_bytes[section_id])
+                        _check_slot_budget(section_reference, self.document_bytes[section_id], expected["numericValues"])
+                        for optional in ("decodedBytes", "numericValues"):
+                            if optional not in section_reference:
+                                expected.pop(optional)
+                        if (type(section_reference.get("vertexCount")) is not int
+                                or type(section_reference.get("indexCount")) is not int
+                                or not _same_json(section_reference, expected)):
+                            raise ValueError("Report section descriptor differs from its source section")
+                        expected_slots.add(section_id)
+                        decoded_bytes += self.document_bytes[section_id]
+                        if decoded_bytes > _MAX_JSON_SLOT_BYTES:
+                            raise ValueError("Report case core and sections exceed the 500 MiB input limit")
+                        sections.append(section)
+                    case["data"]["sections"] = sections
                 cases.append(case)
-            if set(self.documents) != {"cfd-project-data", *(r["elementId"] for r in references)}:
-                raise ValueError("Report contains unreferenced case-data slots")
+            if set(self.documents) != expected_slots:
+                raise ValueError("Report contains unreferenced case-data, section-data or layer-data slots")
             root = {**project, "cases": _assemble_cases(cases, project)}
         elif len(self.documents) != 1:
             raise ValueError("Legacy report contains unreferenced case-data slots")
@@ -409,7 +589,7 @@ def _json_fragments(document):
         yield "".join(pieces)
 
 
-def _prepare_json_slot(document, *, compress=True, directory=None):
+def _prepare_json_slot(document, *, compress=True, directory=None, minimum_bytes=None):
     """Spool a bounded plain/enveloped JSON slot without one giant string."""
     raw = tempfile.TemporaryFile(mode="w+b", dir=directory)
     raw_bytes = 0
@@ -421,7 +601,8 @@ def _prepare_json_slot(document, *, compress=True, directory=None):
                 raise ValueError("Report JSON exceeds the 500 MiB output limit")
             raw.write(data)
         raw.seek(0)
-        if not compress or raw_bytes < _COMPRESSION_THRESHOLD_BYTES:
+        threshold = _COMPRESSION_THRESHOLD_BYTES if minimum_bytes is None else minimum_bytes
+        if not compress or raw_bytes < threshold:
             return raw, raw_bytes
         with tempfile.TemporaryFile(mode="w+b", dir=directory) as packed:
             with gzip.GzipFile(filename="", fileobj=packed, mode="wb", compresslevel=6, mtime=0) as writer:
@@ -462,9 +643,94 @@ def _slot_fragments(stream):
         yield tail
 
 
+def _section_bundle_needed(document):
+    """Stop the size probe at the lazy threshold; never build aggregate JSON."""
+    size = 0
+    for fragment in _json_fragments(document):
+        size += len(fragment.encode("utf-8"))
+        if size >= _SECTION_BUNDLE_THRESHOLD_BYTES:
+            return True
+    return False
+
+
+def _section_bundle_manifest(document):
+    references = []
+    for index, case in enumerate(document["cases"]):
+        reference = {"id": case["id"], "elementId": f"cfd-case-data-{index}"}
+        if _case_slot(case).get("schema") != "cfd-review-composition":
+            core, sections, layers = _lazy_case_parts(case)
+            if len(sections) > _MAX_REPORT_SECTIONS:
+                raise ValueError("Report exceeds the 10000-section per-case limit")
+            if len(layers) > _MAX_REPORT_LAYERS:
+                raise ValueError("Report exceeds the 1000-layer per-case limit")
+            reference.update(summary=_case_summary(case), sections=[
+                _section_reference(section, index, section_index)
+                for section_index, section in enumerate(sections)
+            ], decodedBytes=_decoded_json_bytes(core), numericValues=_core_numeric_values(core))
+            if layers:
+                reference["layerSlots"] = [_layer_reference(layer, index, layer_index)
+                                         for layer_index, layer in enumerate(layers)]
+        references.append(reference)
+    return {"schema": "cfd-review-html-bundle", "version": 2,
+            "project": {key: value for key, value in document.items() if key != "cases"},
+            "cases": references}
+
+
+def _section_bundle_slots(document, *, directory=None):
+    """Keep one current core/layer/section spool open, even for many planes."""
+    total = 0
+    for index, case in enumerate(document["cases"]):
+        slot = _case_slot(case)
+        recipe = slot.get("schema") == "cfd-review-composition"
+        if recipe:
+            sections, layers = [], []
+        else:
+            slot, sections, layers = _lazy_case_parts(case)
+        stream, size = _prepare_json_slot(slot, compress=not recipe, directory=directory,
+                                          minimum_bytes=_SECTION_COMPRESSION_THRESHOLD_BYTES)
+        with stream:
+            if recipe and size > _MAX_COMPOSITION_RECIPE_BYTES:
+                raise ValueError("Composition recipe exceeds the 1 MiB output limit")
+            case_size = size + max(0, len(sections) - 1) + max(0, len(layers) - 1)
+            total += size
+            if total > _MAX_REPORT_BYTES:
+                raise ValueError("Report exceeds the 2 GiB output limit")
+            yield f"cfd-case-data-{index}", stream
+        for layer_index, layer in enumerate(layers):
+            stream, size = _prepare_json_slot(layer, directory=directory,
+                                              minimum_bytes=_SECTION_COMPRESSION_THRESHOLD_BYTES)
+            with stream:
+                case_size += size
+                if case_size > _MAX_JSON_SLOT_BYTES:
+                    raise ValueError("Report case core and sections exceed the 500 MiB output limit (including layers)")
+                total += size
+                if total > _MAX_REPORT_BYTES:
+                    raise ValueError("Report exceeds the 2 GiB output limit")
+                yield f"cfd-layer-data-{index}-{layer_index}", stream
+        for section_index, section in enumerate(sections):
+            stream, size = _prepare_json_slot(section, directory=directory,
+                                              minimum_bytes=_SECTION_COMPRESSION_THRESHOLD_BYTES)
+            with stream:
+                case_size += size
+                if case_size > _MAX_JSON_SLOT_BYTES:
+                    raise ValueError("Report case core and sections exceed the 500 MiB output limit")
+                total += size
+                if total > _MAX_REPORT_BYTES:
+                    raise ValueError("Report exceeds the 2 GiB output limit")
+                yield f"cfd-section-data-{index}-{section_index}", stream
+
+
 @contextmanager
 def _report_slots(document, *, directory=None):
     with ExitStack() as resources:
+        if _section_bundle_needed(document):
+            manifest = _section_bundle_manifest(document)
+            primary, _ = _prepare_json_slot(manifest, directory=directory)
+            resources.enter_context(primary)
+            slots = _section_bundle_slots(document, directory=directory)
+            resources.callback(slots.close)
+            yield primary, slots
+            return
         case_slots = []
         bundle = any(case["data"]["meta"].get("comparison") for case in document["cases"])
         if len(document["cases"]) > 1:
@@ -493,7 +759,7 @@ def _report_slots(document, *, directory=None):
             project = document
         primary, _ = _prepare_json_slot(project, directory=directory)
         resources.enter_context(primary)
-        yield primary, case_slots
+        yield primary, ((f"cfd-case-data-{index}", stream) for index, stream in enumerate(case_slots))
 
 
 def _report_parts(document: dict, template=None, *, directory=None, language=None):
@@ -520,7 +786,8 @@ def _report_parts(document: dict, template=None, *, directory=None, language=Non
         "{{THREE_JS}}": _script("/*\n" + read("vendor/THREE_LICENSE.txt") + "\n*/\n" + read("vendor/three.min.js")),
         "{{ORBIT_CONTROLS_JS}}": _script(read("vendor/OrbitControls.js")),
         "{{FIELD_VIEWER_JS}}": _script(read("field-viewer.js")),
-        "{{STUDIO_JS}}": _script(read("studio.js")),
+        "{{STUDIO_JS}}": _script('"use strict";\n/*\n' + read("vendor/PAKO_LICENSE.txt") + "\n*/\n"
+                                 + read("vendor/pako_inflate.es5.min.js") + "\n;\n" + read("studio.js")),
     }
     custom=validate_template(template) if template is not None else None
     html = custom["html"] if custom and custom["html"] is not None else read("studio.html")
@@ -554,8 +821,8 @@ def _report_parts(document: dict, template=None, *, directory=None, language=Non
         yield substitute(before)
         yield from _slot_fragments(primary)
         yield after[:close.end()]
-        for index, stream in enumerate(case_slots):
-            yield f'\n<script id="cfd-case-data-{index}" type="application/json">'
+        for element_id, stream in case_slots:
+            yield f'\n<script id="{element_id}" type="application/json">'
             yield from _slot_fragments(stream)
             yield "</script>"
         yield substitute(after[close.end():])

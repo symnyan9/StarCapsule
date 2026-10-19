@@ -38,3 +38,7 @@ jobs:
       - run: python -m cfd_review demo --language zh-CN --output demo-check.html
       - run: python tools/check_studio.py --html demo-check.html --output browser-checks
       - run: python tools/check_language.py --output language-checks
+      - run: python tools/check_gzip_fallback.py --output gzip-fallback-checks
+      - run: python tools/check_mobile.py --output mobile-checks
+      - run: python tools/check_mobile_composition.py --output mobile-composition-checks
+      - run: python tools/check_compact_layout.py --output compact-layout-checks

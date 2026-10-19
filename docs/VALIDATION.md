@@ -1,6 +1,18 @@
 # Validation record
 
-Local acceptance date: 2026-10-18. Public fixtures are generated mathematics, independent of any team vehicle or solver result. Private simulation files, exports and detailed run receipts are kept outside the repository.
+Latest local review date: 2026-10-19. Each section records its own version and evidence scope. Public fixtures are generated mathematics, independent of any team vehicle or solver result. Private simulation files, exports and detailed run receipts are kept outside the repository.
+
+## 0.4.0 tablet, lazy loading and compatibility scope
+
+The final 0.4.0 release candidate passed **221 unit tests** with **zero failures, errors or skips**, using the bundled **CPython 3.14.2 / Tk 8.6.15** runtime, including native Tk desktop checks. Its offline Chromium checks passed **467 assertions**: general Studio 50, language 15, gzip fallback 87, mobile review 111, mobile composition 42, compact layout 115, compressed reports 28 and pick readout 19. The compact run had no historical layout baseline; eight optional historical-comparison checks were not run or counted. Browser page errors and external requests were zero. See the sanitized [release-checks-v040.json](release-checks-v040.json) for the release-candidate summary.
+
+Development checks exercised offline Chromium through `file://`, including tablet landscape/portrait, touch input, basic phone layout and desktop regression. They cover on-demand sections/layers, bounded section residency, source-valued picks, untouched-slot HTML saving/reopening, computer-composed half-model presentation, native and fallback gzip, task feedback, compact menus and guarded A/B section linking. These are automated browser/runtime checks, not a new native STAR export or a controlled physical-device qualification.
+
+A user-provided screenshot shows an earlier report rendering in HTML Viewer Q on iPadOS 16.3.1. It confirms that observed page rendered; it does not qualify every interaction, export/save path, large dataset, Safari/WebKit version or tablet. The release remains a prerelease. The embedded gzip fallback addresses a missing decompression API, while JavaScript/WebGL availability and CPU/GPU memory remain host prerequisites.
+
+A private real-case report was repacked without opening STAR: 226 scientific arrays and 30,905,496 numeric values were checked with precision-preserving hashes, including all 50 actual sections and the selected additional layer. The approximately 161 MB output retained the source data. A final tablet-emulated first screen decoded about 143 MB rather than the previous whole-project 366 MB; this measures decoded payload, **not total browser/GPU memory or a RAM reduction percentage**. Its offline real-report smoke check passed 12 checks with no page errors or external requests. Observed timings and V8 heap readings belong to that Windows machine, not a physical iPad benchmark.
+
+The fresh release-candidate results above are separate from earlier development and real-report receipts. They did not start STAR, perform a new native SIM export or establish physical-device qualification. Windows archive and installation acceptance are separate packaging checks. Public demonstrations remain synthetic; private case data and detailed receipts are not release assets. See [0.4.0 release notes](RELEASE_NOTES_0.4.0.md) and [tablet review](MOBILE_REVIEW.md) for user-facing limits.
 
 
 ## GitHub publication checks — 2026-10-19

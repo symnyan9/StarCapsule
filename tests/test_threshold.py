@@ -80,7 +80,7 @@ global.window={};global.document={documentElement:{lang:'zh-CN'}};
 global.THREE=require(process.argv[1]);window.THREE=THREE;
 let source=fs.readFileSync(process.argv[2],'utf8');
 // Test-only exposure of the production class, with no exported product test API.
-source=source.replace('window.DefenseFieldViewer={mount:(root,data)=>new FieldViewer(root,data)};',
+source=source.replace('window.DefenseFieldViewer={mount:(root,data,options)=>new FieldViewer(root,data,options)};',
                       'window.TestFieldViewer=FieldViewer;');
 vm.runInThisContext(source);
 const v=Object.create(window.TestFieldViewer.prototype),nodes=new Map();

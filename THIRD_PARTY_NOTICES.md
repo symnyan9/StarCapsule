@@ -6,6 +6,8 @@ StarCapsule's original application code is MIT licensed. The following upstream 
 
 The application bundles **Three.js r146** and **OrbitControls r146** under the MIT license. Their original license and download URL/SHA256 records are retained in `src/cfd_review/assets/vendor/`. Generated HTML embeds the corresponding code with its license notice. The source package and wheel do not bundle a Python interpreter or native STAR libraries.
 
+It also bundles the inflate-only ES5 browser build of **[pako 2.2.0](https://github.com/nodeca/pako/tree/2.2.0)** as an offline gzip fallback. Upstream pako is distributed under **MIT AND Zlib** terms; the Zlib terms cover the incorporated zlib-derived code. Both license texts are retained in `src/cfd_review/assets/vendor/PAKO_LICENSE.txt`, with the versioned source URL, byte count and SHA256 in `pako-provenance.json`. The bundled `pako_inflate.es5.min.js` retains its upstream notice and is embedded in generated HTML together with the viewer; it requires no network download. Native browser decompression remains preferred. The existing template `STUDIO_JS` hook includes the fallback without a new template interface.
+
 Python standard-library modules provide the application's Python runtime dependencies. Playwright is an optional development/checking dependency; it is unnecessary for using the desktop application or opening exported reports.
 
 ## Optional Windows runtime distribution
@@ -35,6 +37,6 @@ The JLU Racing wordmark in `docs/images/jlu-racing-logo.png` comes from the auth
 
 ## 中文说明
 
-StarCapsule 原创代码采用 MIT 许可；Three.js、OrbitControls 及完整 Windows 包内的 Python 和原生依赖分别保留各自许可。完整 Windows 包附带 CPython 3.14.2，公开源码和 wheel 本身不包含解释器。重新分发完整包时，请保留 `licenses`、运行时原始许可及内含依赖的许可文件。各文件的官方来源、版本依据及 SHA256 见 `licenses/SOURCES.json`。
+StarCapsule 原创代码采用 MIT 许可；Three.js、OrbitControls、pako 及完整 Windows 包内的 Python 和原生依赖分别保留各自许可。内嵌 pako 2.2.0 仅提供离线解压，其 MIT 与 Zlib 许可均保存在 `src/cfd_review/assets/vendor/PAKO_LICENSE.txt`，来源与 SHA256 见同目录 `pako-provenance.json`。完整 Windows 包附带 CPython 3.14.2，公开源码和 wheel 本身不包含解释器。重新分发完整包时，请保留 `licenses`、运行时原始许可及内含依赖的许可文件。Windows 依赖的官方来源、版本依据及 SHA256 见 `licenses/SOURCES.json`。
 
 STAR-CCM+ 由使用者另行安装并取得有效许可，本项目不分发 STAR 软件或许可，也不表示获得其厂商背书。

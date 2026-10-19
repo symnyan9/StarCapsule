@@ -2,13 +2,19 @@
 
 把 STAR-CCM+ 仿真结果装进一个可携带、可交互、可离线打开的 HTML。
 
-[下载 Windows 安装包](https://github.com/symnyan9/StarCapsule/releases/tag/v0.3.1) · [版本发布](https://github.com/symnyan9/StarCapsule/releases) · [自动测试](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
+[下载 Windows 安装包](https://github.com/symnyan9/StarCapsule/releases/tag/v0.4.0) · [版本发布](https://github.com/symnyan9/StarCapsule/releases) · [自动测试](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
 
 StarCapsule Studio 将已保存仿真中的所选几何、场值与后处理对象封装为三维审阅工作台。接收者无需安装 STAR、Python 或服务器，即可旋转模型、扫掠真实截面、读取源数据、对比工况并留下带观察状态的批注。
 
 同一个文件保留模型细节、场值、来源标识、模板与审阅设置。追加导入其他工况后，可以使用双视口联动，也可以将两个半模型放进同一画布；再次导出后，工况库与当前状态随文件一起保存，适合方案评审、技术答辩和结果交付。
 
-大数据槽默认采用 gzip 无损压缩和 Base64 分块，保留导出几何与数值精度，不自动减面或舍入。加载后释放数据文本、减少内部重复校验；拼接复用未改变的数组，并用小型索引保存派生组合。实际速度与容量仍取决于几何密度和设备，实测范围见[验收记录](docs/VALIDATION.md)。
+较大报告将表面、真实截面和附加图层分别无损内嵌，按所选内容加载，保留导出几何与数值精度，不自动减面或舍入。解压优先使用原生接口，缺少接口时使用内置离线兼容组件。拼接复用未改变的数组，并用小型索引保存派生组合。实际速度与容量仍取决于几何密度和设备，实测范围见[验收记录](docs/VALIDATION.md)。
+
+## 0.4.0 更新 · 预发布
+
+同一份 HTML 适配桌面与平板：合并顶部操作，提供触控、抽屉设置和画布内高亮取点读数，给模型留出更多空间。较大报告按需解压，隐藏图层释放工作副本；读取、解压、准备模型和保存时显示任务状态。A/B 联动明确说明用途，单视口时禁用，并修复快速切片时的反向同步问题。
+
+详见[中英文更新说明](docs/RELEASE_NOTES_0.4.0.md#简体中文)和[平板指南](docs/MOBILE_REVIEW.md#平板与移动审阅)。平板布局和兼容路径已覆盖自动检查，实体 iPad/Safari 的完整验收仍待完成。旧 HTML 需另存升级，才会获得新查看器。
 
 [English](README.md) · [安装](docs/INSTALL.zh-CN.md) · [离线审阅与多工况操作](docs/REVIEW.zh-CN.md) · [STAR 导出说明](docs/STAR_ADAPTER.md) · [数据格式](docs/DATA_FORMAT.md) · [中文模板指南](docs/TEMPLATES.zh-CN.md) · [验收记录](docs/VALIDATION.md)
 
@@ -28,7 +34,7 @@ HTML 是所选结果的可携带快照，可用于答辩、方案审阅和所选
 
 ## 语言
 
-软件与新报告默认英文，顶部可切换 **简体中文**，当前选择和观察状态保持。桌面记住本地偏好；HTML 与工程 JSON 保存自己的语言。对象名、场函数名和用户文字保留原文。安装、审阅与模板说明均提供中英文版本。
+软件与新报告默认英文，桌面顶部或 HTML 的 **“更多”** 菜单可切换 **简体中文**，当前选择和观察状态保持。桌面记住本地偏好；HTML 与工程 JSON 保存自己的语言。对象名、场函数名和用户文字保留原文。安装、审阅与模板说明均提供中英文版本。
 
 ```powershell
 python run.py demo --language en --output review-en.html
@@ -37,7 +43,7 @@ python run.py build case.json --language zh-CN --output review-zh.html
 
 ## 选择 SIM，直接导出 HTML
 
-Windows 64 位用户可使用完整包 `StarCapsule-Studio-0.3.1-Windows-x64.zip`：**完整解压 → 双击 Install.cmd → 打开桌面 StarCapsule Studio**。也可直接双击 `Launch.cmd` 运行。Python 和 Tk 已内置；读取 SIM 仍需本机安装兼容且有许可的 STAR-CCM+。
+Windows 64 位用户可使用完整包 `StarCapsule-Studio-0.4.0-Windows-x64.zip`：**完整解压 → 双击 Install.cmd → 打开桌面 StarCapsule Studio**。也可直接双击 `Launch.cmd` 运行。Python 和 Tk 已内置；读取 SIM 仍需本机安装兼容且有许可的 STAR-CCM+。
 
 源码目录双击 **Open Studio.cmd**，或运行：
 
@@ -91,7 +97,7 @@ Windows 也可双击 `Open Demo.cmd`。查看导出的 HTML 无需 Python、STAR
 
 **“CpT≥阈值透明”** 默认阈值为 **0.98**，可填写其他有限数并点击“应用”。截面上达到或超过阈值的 CpT 值变为透明，原始数值保持；色标上下限独立控制配色。此筛选只作用于 CpT 截面，表面 Cp 和 Cp 截面分别使用自身显示控制。
 
-整份工程最多包含 **32 个工况**，派生拼接工况也计入其中；原始工况或工程清单的数据槽最多 **500 MiB**，派生拼接索引最多 **1 MiB**，整份 HTML 最多 **2 GiB**。大工程按工况分块嵌入，避免把所有工况拼成一个巨大的 JSON 字符串。这些是格式校验上限，实际流畅度和可用规模仍取决于内存、几何密度、图层及同时显示的两个工况。工程 JSON 导入/保存上限为 500 MiB，更大的组合工程请使用 **“导出 HTML”**。已导出数据保持原分辨率，不自动降采样。
+整份工程最多包含 **32 个工况**，派生拼接工况也计入其中；每个原始工况的全部数据块合计及单份工程清单分别最多 **500 MiB**，派生拼接索引最多 **1 MiB**，整份 HTML 最多 **2 GiB**。大工程按工况分块嵌入，避免把所有工况拼成一个巨大的 JSON 字符串。这些是格式校验上限，实际流畅度和可用规模仍取决于内存、几何密度、图层及同时显示的两个工况。工程 JSON 导入/保存上限为 500 MiB，更大的组合工程请使用 **“导出 HTML”**。已导出数据保持原分辨率，不自动降采样。
 
 内部编辑快照仅复制可编辑元数据，保留对源数值数组的引用；拼接复用未改变的源数组，按需分配反射后的几何。保存 HTML 时，原始工况各存一次，派生拼接使用小型索引记录来源与设置，重新打开时重建并核验显示组合。旧版完整工况报告保持可读。这减少了重复数据副本；实际容量仍取决于系统可用内存及浏览器、GPU 资源。
 
@@ -141,13 +147,13 @@ python run.py upgrade old-review.html --output updated-review.html
 桌面界面需要 Python 3.10+ 及 Tkinter。使用已打包的 wheel 离线安装：
 
 ```powershell
-python -m pip install --no-index starcapsule_studio-0.3.1-py3-none-any.whl
+python -m pip install --no-index starcapsule_studio-0.4.0-py3-none-any.whl
 starcapsule-gui
 ```
 
 源码也可直接运行，或用 `python -m pip install .` 安装。源码构建阶段可能下载构建后端；运行时 Python 仅用标准库。导出的 HTML 内嵌数据、Three.js、OrbitControls 和模板素材，可直接通过 `file://` 打开。STAR 导出仍遵循用户自己的许可方式，网络许可需满足相应许可服务器条件。
 
-压缩 HTML 需要支持 WebGL 和原生 `DecompressionStream('gzip')` 的桌面浏览器，本机已在 Chromium 验证。新命令为 `starcapsule` / `starcapsule-gui`，原 `cfd-review` / `cfd-review-gui` 别名继续可用。
+查看环境需支持本地 HTML、JavaScript 和 WebGL；优先原生 gzip 解压，缺少接口时使用内嵌离线解压组件。系统文件预览可能不执行查看器，iPadOS 及内存限制见[平板指南](docs/MOBILE_REVIEW.md#平板与移动审阅)。新命令为 `starcapsule` / `starcapsule-gui`，原 `cfd-review` / `cfd-review-gui` 别名继续可用。
 
 当前原生 API 配置针对 **STAR-CCM+ 19.02.009**。实际导出、合成测试、打包验证及版本限制统一记录在[验收记录](docs/VALIDATION.md)。宏编译和演示页面通过，分别证明相应范围；它们不代表任意涡结构、模型尺寸或 STAR 版本均已完成真实验收。扫掠表示空间位置变化；未记录的瞬态历史无法由导出恢复。
 

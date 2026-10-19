@@ -48,3 +48,69 @@
 .fv-pick-context{display:flex;flex:1;flex-direction:column;gap:0;min-width:0;max-height:36px;overflow:auto;line-height:1.5;scrollbar-color:#8daac2 #eaf2f8}
 .fv-pick-name{color:#2c526f;font-size:12px;font-weight:500}
 .fv-pick-coordinates{color:#405f78;font-size:12px}
+.fv-settings-toggle,.fv-settings-heading,.fv-settings-scrim{display:none}
+/* Touch review keeps scientific controls reachable without reserving canvas width. */
+[data-mobile-review="true"] .fv-layout{position:relative;grid-template-columns:minmax(0,1fr)!important}
+[data-mobile-review="true"] .fv-camera-tools{flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:6px;scrollbar-width:thin}
+[data-mobile-review="true"] .fv-camera-tools button{flex:none;min-width:44px;min-height:44px;font-size:14px}
+[data-mobile-review="true"] .fv-camera-tools [data-action="pick"],[data-mobile-review="true"] .fv-settings-toggle{order:-1}
+[data-mobile-review="true"] .fv-settings-toggle{display:inline-flex;background:#e8f2fc;border-color:#91b7da;color:#154d7d}
+[data-mobile-review="true"] .fv-settings{display:none;position:absolute;z-index:35;right:0;top:0;bottom:0;width:min(340px,92%);height:100%;max-height:none;padding:12px;box-shadow:-8px 0 24px #18354d26;background:#fbfcfe;overflow-y:auto;overscroll-behavior:contain}
+[data-mobile-review="true"][data-settings-open="true"] .fv-settings{display:block}
+[data-mobile-review="true"][data-settings-open="true"] .fv-settings-scrim{display:block;position:absolute;inset:0;z-index:34;width:100%;height:100%;padding:0;border:0;border-radius:0;background:#142a4240}
+[data-mobile-review="true"] .fv-settings-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:-12px;z-index:2;margin:-12px -12px 12px;padding:8px 12px;background:#edf4fa;border-bottom:1px solid #cbd4de}
+[data-mobile-review="true"] .fv-settings-heading h4{margin:0;font-size:16px}
+[data-mobile-review="true"] .fv-settings-heading button{min-width:44px;min-height:44px;border:1px solid #a8bfd3;border-radius:4px;background:#fff}
+[data-mobile-review="true"] .fv-settings-heading svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+[data-mobile-review="true"] .fv-settings button,[data-mobile-review="true"] .fv-settings select,[data-mobile-review="true"] .fv-settings input:not([type="checkbox"]){min-height:44px;font-size:16px}
+[data-mobile-review="true"] .fv-settings label,[data-mobile-review="true"] .fv-settings h4{font-size:14px}
+[data-mobile-review="true"] .fv-settings label.fv-inline{min-height:44px;margin:4px 0;font-size:14px}
+[data-mobile-review="true"] .fv-settings input[type="checkbox"]{width:20px;height:20px;flex:none}
+[data-mobile-review="true"] .fv-small{font-size:13px;line-height:1.6}
+[data-mobile-review="true"] .fv-pan-tools button{min-width:44px}
+[data-mobile-review="true"] .fv-gesture{max-width:calc(100% - 16px);font-size:11px;line-height:1.5;white-space:normal}
+[data-mobile-review="true"] .fv-pick-strip{min-height:60px;height:60px;margin:5px;padding:5px 7px;gap:7px}
+[data-mobile-review="true"] .fv-pick-heading{font-size:12px}
+[data-mobile-review="true"] .fv-pick-result{font-size:12px}
+[data-mobile-review="true"] .fv-pick-result[data-state="reading"],[data-mobile-review="true"] .fv-pick-result[data-state="restored"]{gap:7px}
+[data-mobile-review="true"] .fv-pick-metric{padding:6px 8px;max-width:48%}
+[data-mobile-review="true"] .fv-pick-context{max-height:42px;font-size:11px}
+[data-mobile-review="true"] .fv-legends{top:8px;right:8px;gap:5px}
+[data-mobile-review="true"] .fv-legend{width:100px;padding:6px}
+[data-mobile-review="true"] .fv-failure{font-size:14px;top:30%}
+.fv-layer-load-status{padding:6px 7px;background:#edf4fa;border:1px solid #cbd7e1}
+.fv-layer-load-status.is-error{background:#fff1ed;border-color:#d9aaa0;color:#862e27}
+
+/* The drawer trigger belongs to touch layouts; keep desktop tools on one row. */
+.defense-field-viewer[data-mobile-review="false"] .fv-settings-toggle{display:none}
+.studio-field-root[data-mobile-review="false"] .fv-camera-tools{gap:2px}
+.studio-field-root[data-mobile-review="false"] .fv-camera-tools button{padding-left:3px;padding-right:3px}
+
+/* A single view toolbar and a canvas readout preserve the useful model area. */
+.studio-field-root .fv-camera-tools{position:relative;z-index:20;min-height:40px;gap:4px;padding:4px 6px;overflow:visible;flex-wrap:wrap}
+.fv-view-menu{position:static;flex:none}
+.fv-view-menu>summary{display:flex;align-items:center;justify-content:center;gap:4px;list-style:none;min-height:28px;padding:4px 6px;border:1px solid #cbd4de;border-radius:3px;background:#fff;color:#344f69;font-size:12px;line-height:1.4;cursor:pointer;white-space:nowrap}
+.fv-view-menu>summary::-webkit-details-marker{display:none}
+.fv-view-menu>summary::marker{content:""}
+.fv-view-menu>summary::after{content:"";width:5px;height:5px;margin:0 2px 3px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.fv-view-menu>summary:focus-visible{outline:2px solid #438dd0;outline-offset:2px}
+.fv-view-menu[open]>summary{background:#e8f1fa;border-color:#8cb5d7}
+.fv-view-presets{display:none;position:absolute;z-index:40;top:calc(100% + 4px);right:6px;width:200px;padding:8px;background:#fff;border:1px solid #b6c6d5;border-radius:6px;box-shadow:0 8px 24px #152d4530}
+.fv-view-menu[open]>.fv-view-presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fv-view-presets [data-action="fit-section"]{grid-column:1 / -1}
+.fv-stage>.fv-pick-strip{position:absolute;z-index:8;top:8px;left:8px;max-width:calc(100% - 132px);height:auto;min-height:44px;margin:0;padding:6px 9px;gap:8px;box-shadow:0 3px 10px #18354d12}
+.fv-stage>.fv-pick-strip[data-state="empty"]{display:none}
+.defense-field-viewer[data-pick-active="true"] .fv-stage>.fv-pick-strip[data-state="empty"]{display:flex;min-height:34px}
+.fv-stage .fv-pick-heading{font-size:12px;white-space:nowrap}
+.fv-stage .fv-pick-result{min-width:0}
+.fv-stage .fv-pick-context{max-height:38px}
+.studio-view-grid[data-count="2"] .fv-stage .fv-pick-heading{display:none}
+[data-mobile-review="true"] .fv-camera-tools{flex-wrap:wrap;overflow:visible;gap:4px;padding:4px}
+[data-mobile-review="true"] .fv-camera-tools>.studio-view-heading{order:-3}
+[data-mobile-review="true"] .fv-camera-tools button,[data-mobile-review="true"] .fv-view-menu>summary{min-width:44px;min-height:44px;font-size:14px}
+[data-mobile-review="true"] .fv-settings-toggle .fv-action-label,[data-mobile-review="true"] [data-action="reset"] .fv-action-label{display:none}
+[data-mobile-review="true"] .fv-stage>.fv-pick-strip{height:auto;min-height:46px;max-width:calc(100% - 128px);margin:0;padding:5px 7px;gap:7px}
+[data-mobile-review="true"] .fv-stage .fv-pick-heading{display:none}
+[data-mobile-review="true"] .fv-stage .fv-pick-result[data-state="empty"]{font-size:12px}
+[data-mobile-review="true"] .fv-stage .fv-pick-metric{padding:5px 8px}
+[data-mobile-review="true"] .fv-view-presets button{min-height:44px}

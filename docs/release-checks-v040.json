@@ -1,0 +1,41 @@
+{
+  "version": "0.4.0",
+  "releaseStatus": "prerelease",
+  "date": "2026-10-19",
+  "python": {
+    "version": "3.14.2",
+    "platform": "Windows",
+    "tkVersion": "8.6.15",
+    "tests": 221,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "includesNativeTk": true
+  },
+  "offlineBrowser": {
+    "engine": "Chromium",
+    "profile": "Desktop and tablet/touch emulation",
+    "checks": {
+      "studio": 50,
+      "language": 15,
+      "gzipFallback": 87,
+      "mobileReview": 111,
+      "mobileComposition": 42,
+      "compactLayout": 115,
+      "compressedReport": 28,
+      "pickReadout": 19
+    },
+    "total": 467,
+    "uncaughtJavaScriptErrors": 0,
+    "externalRequests": 0,
+    "historicalBaselineComparisonsNotRun": 8
+  },
+  "scope": {
+    "newStarOrSimRun": false,
+    "controlledPhysicalIPadQualification": false,
+    "publicDemonstrations": "Synthetic only",
+    "sourceMeshesDecimated": false,
+    "sourceNumbersRounded": false
+  },
+  "runtimePackaging": "Windows package relocation, installation and upgrade acceptance recorded separately from source/browser checks"
+}

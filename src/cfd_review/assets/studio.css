@@ -41,3 +41,111 @@
 @media(max-width:1450px){.studio-header{padding:7px 12px;gap:10px}.studio-compare-bar{padding:5px 12px}.studio-workspace{grid-template-columns:176px minmax(0,1fr)}.studio-view-heading select{width:112px;max-width:34%}.studio-view-heading input{min-width:40px}.studio-view-meta{padding:2px 4px}.studio-view-grid[data-count="2"] .studio-view-meta{max-width:94px;overflow:hidden;text-overflow:ellipsis}}
 
 .studio-language{display:flex;align-items:center;flex:none}.studio-language select{background:#2d3b4b;color:#e6edf5;border-color:#536579;min-height:32px;max-width:112px;font-size:12px}.studio-language select:focus-visible{outline-color:#a5d4ff}.studio-language option{color:#e6edf5;background:#2d3b4b}
+
+.studio-main{position:relative}
+.studio-task-status{position:absolute;top:12px;right:16px;z-index:80;display:flex;align-items:center;gap:12px;max-width:min(480px,calc(100% - 28px));padding:12px 16px;background:#173c5e;color:#f0f7fe;border-radius:8px;box-shadow:0 6px 20px #10293c35;pointer-events:none}
+.studio-task-status[hidden]{display:none}
+.studio-task-status progress{width:54px;height:7px;flex:none;accent-color:#8ac8ff}
+.studio-task-status>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.studio-task-status strong{font-size:14px;line-height:1.4;font-weight:650}
+.studio-task-status span{font-size:12px;line-height:1.5;color:#d1e5f6;overflow-wrap:anywhere}
+/* Mobile is a display profile; the full-resolution source remains unchanged. */
+html[data-mobile-review="true"] body{min-width:0;overflow-x:hidden}
+html[data-mobile-review="true"] .studio-header{flex-wrap:wrap;gap:7px;padding:7px 9px}
+html[data-mobile-review="true"] .studio-brand{flex:none}
+html[data-mobile-review="true"] .studio-brand strong{font-size:16px}
+html[data-mobile-review="true"] .studio-title{min-width:70px}
+html[data-mobile-review="true"] .studio-title input{min-height:44px;font-size:16px}
+html[data-mobile-review="true"] .studio-actions{display:flex;max-width:100%;gap:6px;overflow-x:auto;flex-wrap:nowrap}
+html[data-mobile-review="true"] .studio-actions button{flex:none;min-height:44px;font-size:13px}
+.studio-mobile-mode{display:flex;align-items:center;flex:none}
+.studio-mobile-mode select{background:#2d3b4b;color:#e6edf5;border-color:#536579;min-height:32px;max-width:150px;font-size:12px}
+.studio-mobile-mode select:focus-visible{outline-color:#a5d4ff}
+.studio-mobile-mode option{color:#e6edf5;background:#2d3b4b}
+html[data-mobile-review="true"] .studio-language select,html[data-mobile-review="true"] .studio-mobile-mode select{min-height:44px;font-size:14px}
+html[data-mobile-review="true"] .studio-compare-bar{gap:7px;min-height:44px;padding:5px 8px;flex-wrap:wrap}
+html[data-mobile-review="true"] .studio-layout-controls button{min-height:44px;min-width:44px;font-size:13px}
+html[data-mobile-review="true"] .studio-links{gap:9px;flex-wrap:wrap;font-size:13px}
+html[data-mobile-review="true"] .studio-links label{min-height:44px;display:inline-flex;align-items:center;gap:5px}
+html[data-mobile-review="true"] input[type="checkbox"]{width:20px;height:20px}
+html[data-mobile-review="true"] .studio-workspace,html[data-mobile-review="true"] .studio-workspace[data-sidebar-collapsed="true"]{position:relative;grid-template-columns:44px minmax(0,1fr);min-height:300px}
+html[data-mobile-review="true"] .studio-sidebar{width:44px;position:relative;z-index:30}
+html[data-mobile-review="true"] .studio-workspace:not([data-sidebar-collapsed="true"]) .studio-sidebar{position:absolute;left:0;top:0;width:min(300px,88vw);height:100%;overflow-y:auto;box-shadow:8px 0 24px #18354d26}
+html[data-mobile-review="true"] .studio-sidebar-toggle,html[data-mobile-review="true"] .studio-workspace[data-sidebar-collapsed="true"] .studio-sidebar-toggle{min-height:44px}
+html[data-mobile-review="true"] .studio-sidebar button,html[data-mobile-review="true"] .studio-sidebar select{min-height:44px}
+html[data-mobile-review="true"] .studio-sidebar textarea{font-size:16px}
+html[data-mobile-review="true"] .studio-main{padding:4px 4px 0;grid-column:2}
+html[data-mobile-review="true"] .studio-view-grid{gap:5px}
+html[data-mobile-review="true"] .studio-view-heading{min-height:48px;padding:3px 5px;gap:4px}
+html[data-mobile-review="true"] .studio-view-heading select,html[data-mobile-review="true"] .studio-view-heading input,html[data-mobile-review="true"] .studio-view-heading button{min-height:44px;font-size:14px}
+html[data-mobile-review="true"] .studio-view-heading button{min-width:44px}
+html[data-mobile-review="true"] .studio-view-heading select{max-width:42%;width:140px}
+html[data-mobile-review="true"] .studio-view-meta{max-width:90px;overflow:hidden;text-overflow:ellipsis}
+html[data-mobile-review="true"] .studio-main-status{font-size:11px;min-height:22px}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-header .studio-title{flex-basis:100%;order:3}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-header .studio-actions{flex-basis:100%;order:4}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-view-heading input{display:none}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-view-heading select{max-width:none;flex:1;min-width:0}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-view-grid[data-count="2"]{grid-template-columns:minmax(0,1fr);overflow-y:auto;grid-auto-rows:minmax(340px,1fr)}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-view-grid[data-count="2"] .studio-view{min-height:340px}
+
+/* One shell row; secondary project actions open over, rather than above, 3D. */
+.studio-header{position:relative;z-index:60;min-height:48px;padding:4px 10px;gap:12px;flex-wrap:nowrap}
+.studio-header>.studio-compare-bar{flex:1;min-width:0;min-height:0;justify-content:flex-start;gap:8px;padding:0;background:transparent;border:0;color:inherit}
+.studio-header .studio-coordinate-note{display:none}
+.studio-header .studio-brand{gap:7px;flex:none}
+.studio-header .studio-brand>svg{width:25px;height:25px}
+.studio-header .studio-brand strong{font-size:16px}
+.studio-header .studio-actions{flex:none;gap:6px;overflow:visible}
+.studio-header .studio-layout-controls{gap:4px;flex:none}
+.studio-header .studio-layout-controls button[aria-pressed="true"]{background:#255f91;border-color:#83b5de;color:#fff}
+.studio-more-menu,.studio-link-menu{position:relative;flex:none}
+.studio-more-menu>summary,.studio-link-menu>summary,.studio-case-menu>summary{display:flex;align-items:center;justify-content:center;gap:6px;min-height:32px;padding:5px 9px;list-style:none;border:1px solid #536579;border-radius:4px;background:#2d3b4b;color:#e6edf5;cursor:pointer;white-space:nowrap;font-size:12px}
+.studio-more-menu>summary::-webkit-details-marker,.studio-link-menu>summary::-webkit-details-marker,.studio-case-menu>summary::-webkit-details-marker{display:none}
+.studio-more-menu>summary::marker,.studio-link-menu>summary::marker,.studio-case-menu>summary::marker{content:""}
+.studio-more-menu>summary::after,.studio-link-menu>summary::after{content:"";width:6px;height:6px;margin:0 2px 3px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.studio-more-menu[open]>summary,.studio-link-menu[open]>summary{background:#3b4e63;border-color:#8cb5d7}
+.studio-more-menu>summary:focus-visible,.studio-link-menu>summary:focus-visible,.studio-case-menu>summary:focus-visible{outline:2px solid #438dd0;outline-offset:2px}
+.studio-more-popover,.studio-link-popover,.studio-case-popover{display:none;position:absolute;top:calc(100% + 6px);z-index:70;padding:12px;background:#fff;color:var(--ink);border:1px solid #b6c6d5;border-radius:6px;box-shadow:0 8px 24px #152d4530;white-space:normal}
+.studio-more-menu[open]>.studio-more-popover{display:flex;flex-direction:column;gap:12px;right:0;width:min(300px,calc(100vw - 24px));max-height:calc(100dvh - 76px);overflow-y:auto}
+.studio-more-popover>label,.studio-case-popover>label{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:12px;color:#42576b}
+.studio-header .studio-more-popover input,.studio-header .studio-more-popover select{display:block;width:100%;max-width:none;min-height:34px;padding:6px 8px;background:#fff;color:var(--ink);border-color:#b6c6d5;font-size:14px}
+.studio-header .studio-more-popover option{color:var(--ink);background:#fff}
+.studio-header .studio-more-popover button{background:#edf4fb;color:#194f7e;border-color:#b1c9dd}
+.studio-link-menu[open]>.studio-link-popover{display:block;left:0;width:min(300px,calc(100vw - 24px))}
+.studio-link-popover p{margin:0 0 10px;font-size:12px;line-height:1.6;color:#4f6579}
+.studio-link-popover .studio-links{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin:0;padding:0;border:0;min-width:0}
+.studio-link-popover .studio-links label{min-height:32px;cursor:pointer;font-size:13px}
+.studio-link-popover .studio-links:disabled label{cursor:default;color:#65778a}
+.studio-link-popover .studio-links input{flex:none}
+.studio-view-heading{position:relative;display:flex;align-items:center;flex:0 1 auto;min-width:0;min-height:32px;margin:0 5px 0 0;padding:0;gap:4px;border:0;background:transparent;order:-3}
+.studio-view-heading select{width:150px;max-width:none;min-height:32px;font-size:12px}
+.studio-case-menu{position:static;flex:none}
+.studio-case-menu>summary{min-width:28px;min-height:30px;padding:4px;background:#fff;color:#425c74;border-color:#cbd4de}
+.studio-case-menu>summary svg{width:17px;height:17px}
+.studio-case-menu[open]>.studio-case-popover{display:flex;flex-direction:column;gap:10px;left:0;right:auto;width:min(280px,calc(100vw - 80px))}
+.studio-case-popover input{display:block;width:100%;max-width:none;flex:none;padding:6px 8px;border-color:#b6c6d5}
+.studio-case-popover .studio-view-meta{max-width:none;white-space:normal;align-self:flex-start}
+.studio-case-popover button{width:100%}
+html[data-mobile-review="true"] .studio-header{min-height:52px;flex-wrap:nowrap;gap:8px;padding:4px 8px}
+html[data-mobile-review="true"] .studio-header .studio-brand strong{font-size:15px}
+html[data-mobile-review="true"] .studio-header .studio-actions{max-width:none;gap:5px;overflow:visible}
+html[data-mobile-review="true"] .studio-header>.studio-compare-bar{flex-wrap:nowrap;gap:6px;min-height:0;padding:0}
+html[data-mobile-review="true"] .studio-layout-controls .studio-action-label{display:none}
+html[data-mobile-review="true"] .studio-header .studio-layout-controls button{min-width:44px;min-height:44px;padding:6px}
+html[data-mobile-review="true"] .studio-header .studio-actions>button{min-height:44px;padding:6px 9px;font-size:13px}
+html[data-mobile-review="true"] .studio-more-menu>summary,html[data-mobile-review="true"] .studio-link-menu>summary{min-height:44px;font-size:13px;padding:6px 8px}
+html[data-mobile-review="true"] .studio-more-popover input,html[data-mobile-review="true"] .studio-more-popover select,html[data-mobile-review="true"] .studio-more-popover button{min-height:44px;font-size:16px}
+html[data-mobile-review="true"] .studio-link-popover .studio-links label{min-height:44px}
+html[data-mobile-review="true"] .studio-view-heading{min-height:44px;padding:0;gap:4px}
+html[data-mobile-review="true"] .studio-view-heading select{width:145px;max-width:none;min-height:44px;font-size:16px}
+html[data-mobile-review="true"] .studio-case-menu>summary{min-width:44px;min-height:44px;padding:6px}
+html[data-mobile-review="true"] .studio-case-popover input{display:block;width:100%;min-height:44px;font-size:16px}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-header{flex-wrap:wrap}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-brand{flex:1}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-header>.studio-compare-bar{order:3;flex-basis:100%}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-header .studio-actions{flex-basis:auto;order:0}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-actions .studio-action-label{display:none}
+html[data-mobile-review="true"][data-mobile-narrow="true"] .studio-view-heading select{width:120px;flex:none}
+@media(max-width:1100px){.studio-header .studio-layout-controls .studio-action-label{display:none}.studio-header .studio-layout-controls button{min-width:32px}.studio-header .studio-brand strong{font-size:15px}}
+@media(max-width:850px){html[data-mobile-review="true"] .studio-header .studio-actions>button .studio-action-label{display:none}html[data-mobile-review="true"] .studio-header .studio-actions>button{min-width:44px;padding:6px}}

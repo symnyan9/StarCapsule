@@ -22,7 +22,7 @@ def main():
     out = args.output.resolve(); out.mkdir(parents=True, exist_ok=True)
     receipt = {"fixture": "Explicit synthetic DEMO; no STAR process or real CFD data",
                "checks": {}, "pageErrors": [], "network": []}
-    report = build_report(make_demo_project(), out / "pick-readout-demo.html")
+    report = build_report(make_demo_project(), out / "pick-readout-demo.html", language="zh-CN")
 
     def check(label, condition):
         receipt["checks"][label] = bool(condition)
@@ -46,10 +46,11 @@ def main():
             page.wait_for_function("() => window.CFDStudio?.viewers.length===2")
             page.evaluate("CFDStudio.ready")
             page.wait_for_function("() => CFDStudio.viewers.every(v=>v.sectionMesh)")
-            check("both readouts sit between camera tools and canvas", page.evaluate("""() =>
-              CFDStudio.viewers.every(v=>{const b=v.el('pick-strip').getBoundingClientRect(),
+            check("empty readouts leave the canvas directly below camera tools", page.evaluate("""() =>
+              CFDStudio.viewers.every(v=>{const strip=v.el('pick-strip'),
               a=v.root.querySelector('.fv-camera-tools').getBoundingClientRect(),
-              c=v.el('canvas').getBoundingClientRect();return b.top>=a.bottom&&b.bottom<=c.top&&b.height>=32;})"""))
+              c=v.el('canvas').getBoundingClientRect();return getComputedStyle(strip).display==='none'
+               &&getComputedStyle(strip).position==='absolute'&&c.top>=a.bottom&&c.height>=220;})"""))
             check("initial empty state is distinct", page.evaluate("""() =>
               CFDStudio.viewers.every(v=>v.el('pick-strip').dataset.state==='empty'&&
               v.el('pick-result').textContent.includes('双击'))"""))
@@ -66,9 +67,11 @@ def main():
             }""")
             page.mouse.dblclick(point["x"], point["y"])
             check("actual double click populates highlighted raw reading", page.evaluate("""() => {
-              const v=CFDStudio.viewers[0],s=v.el('pick-strip'),r=v.el('pick-result');
+              const v=CFDStudio.viewers[0],s=v.el('pick-strip'),r=v.el('pick-result'),
+               b=s.getBoundingClientRect(),c=v.el('canvas').getBoundingClientRect();
               return !!v.lastPick&&Number.isFinite(v.lastPick.value)&&s.dataset.state==='reading'
                &&r.dataset.state==='reading'&&r.textContent.includes('三角面内插值')
+               &&b.top>=c.top&&b.bottom<=c.bottom&&b.left>=c.left&&b.right<=c.right
                &&getComputedStyle(s).backgroundColor==='rgb(231, 242, 255)';}"""))
             page.evaluate("window.__pickSaved=CFDStudio.viewers[0].getState()")
             check("a real scalar is isolated in a filled metric rectangle", page.evaluate("""() => {
@@ -127,7 +130,7 @@ def main():
               const result=v.el('pick-result'),strip=v.el('pick-strip').getBoundingClientRect(),
                canvas=v.el('canvas').getBoundingClientRect();return !result.querySelector('img')&&
                result.textContent.includes('<img')&&result.getBoundingClientRect().height<=81&&
-               strip.bottom<=canvas.top&&canvas.height>=220;
+               strip.top>=canvas.top&&strip.bottom<=canvas.bottom&&canvas.height>=220;
             }"""))
             page.screenshot(path=str(out / "readout-dual-1440.png"))
             page.evaluate("CFDStudio.viewers[0].setState(window.__pickSaved)")
@@ -149,7 +152,8 @@ def main():
               return !!v.lastPick&&v.lastPick.value===s.selection.value&&
                v.el('pick-metric')?.textContent.startsWith('Cp=')&&
                v.el('pick-strip').dataset.state==='restored'&&
-               v.el('pick-strip').getBoundingClientRect().bottom<=v.el('canvas').getBoundingClientRect().top;}
+               v.el('pick-strip').getBoundingClientRect().top>=v.el('canvas').getBoundingClientRect().top&&
+               v.el('pick-strip').getBoundingClientRect().bottom<=v.el('canvas').getBoundingClientRect().bottom;}
             """))
             page.set_viewport_size({"width": 1920, "height": 1080})
             page.screenshot(path=str(out / "readout-dual-1920.png"))

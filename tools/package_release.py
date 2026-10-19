@@ -16,7 +16,7 @@ FILES = (
     "README.md", "README.zh-CN.md", "pyproject.toml", "LICENSE",
     "THIRD_PARTY_NOTICES.md", ".gitignore", "CHANGELOG.md", "CONTRIBUTING.md",
     "PRODUCT.md", "DESIGN.md", "AGENTS.md", "run.py", "Open Demo.cmd", "Open Studio.cmd",
-    "tools/check_studio.py", "tools/check_desktop.py", "tools/check_split_comparison.py", "tools/check_stitch_memory.py", "tools/check_compressed_report.py", "tools/check_layout_import.py", "tools/check_pick_readout.py", "tools/check_mirror_display.py", "tools/check_language.py", "tools/package_release.py",
+    "tools/check_studio.py", "tools/check_desktop.py", "tools/check_split_comparison.py", "tools/check_stitch_memory.py", "tools/check_compressed_report.py", "tools/check_gzip_fallback.py", "tools/check_compact_layout.py", "tools/check_layout_import.py", "tools/check_pick_readout.py", "tools/check_mirror_display.py", "tools/check_language.py", "tools/check_mobile.py", "tools/check_mobile_composition.py", "tools/package_release.py",
 )
 DIRECTORIES = ("src", "tests", "docs", "examples", "licenses", ".github")
 EXCLUDED = {"__pycache__", "node_modules", ".private", ".git", "build", "dist"}
