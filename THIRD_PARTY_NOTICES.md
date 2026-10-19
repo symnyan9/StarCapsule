@@ -29,6 +29,10 @@ The complete Windows x64 package includes an unmodified **CPython 3.14.2** runti
 
 STAR-CCM+ is separately installed commercial software by Siemens. StarCapsule distributes no STAR application, Java libraries, solver or license. Export macros run inside the user's own compatible and licensed STAR installation. Product names identify interoperability; they do not imply affiliation or endorsement.
 
+## Acknowledgement artwork
+
+The JLU Racing wordmark in `docs/images/jlu-racing-logo.png` comes from the author's existing team materials. It is included unchanged at the author's request for the inspiration acknowledgement. Artwork attribution: **JLU Racing**.
+
 ## 中文说明
 
 StarCapsule 原创代码采用 MIT 许可；Three.js、OrbitControls 及完整 Windows 包内的 Python 和原生依赖分别保留各自许可。完整 Windows 包附带 CPython 3.14.2，公开源码和 wheel 本身不包含解释器。重新分发完整包时，请保留 `licenses`、运行时原始许可及内含依赖的许可文件。各文件的官方来源、版本依据及 SHA256 见 `licenses/SOURCES.json`。

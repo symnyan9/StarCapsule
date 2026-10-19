@@ -81,6 +81,8 @@ StarCapsule 是**所选结果的便携快照与审阅工具**。HTML 保存导�
 
 ## 作者与灵感
 
+![JLU Racing — GSPEED × CONCEPTION × GSMART](images/jlu-racing-logo.png)
+
 **Designed by Symn · Jilin University**
 
 **Inspired by the simulation and design-review workflows of Gsmart, part of JLU Racing at Jilin University.**

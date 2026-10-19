@@ -2,8 +2,6 @@
 
 把 STAR-CCM+ 仿真结果装进一个可携带、可交互、可离线打开的 HTML。
 
-作者 **Symn** · 学校 **Jilin University（吉林大学）**。
-
 [下载 Windows 安装包](https://github.com/symnyan9/StarCapsule/releases/tag/v0.3.1) · [版本发布](https://github.com/symnyan9/StarCapsule/releases) · [自动测试](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
 
 StarCapsule Studio 将已保存仿真中的所选几何、场值与后处理对象封装为三维审阅工作台。接收者无需安装 STAR、Python 或服务器，即可旋转模型、扫掠真实截面、读取源数据、对比工况并留下带观察状态的批注。
@@ -156,6 +154,8 @@ starcapsule-gui
 源码、说明和安装包通过本仓库及 [Releases](https://github.com/symnyan9/StarCapsule/releases) 提供。原创代码采用 MIT 许可；Three.js 与 OrbitControls 保留原许可，STAR 软件及 Java 库由用户自行提供。
 
 ## 灵感与作者
+
+![JLU Racing — GSPEED × CONCEPTION × GSMART](docs/images/jlu-racing-logo.png)
 
 灵感来自吉林大学 **JLU Racing 旗下 Gsmart 吉智无人驾驶方程式车队** 的仿真与设计评审工作流。
 

@@ -81,6 +81,8 @@ Precision retention applies to the exported data. Convergence, physical definiti
 
 ## Creator and inspiration
 
+![JLU Racing — GSPEED × CONCEPTION × GSMART](images/jlu-racing-logo.png)
+
 **Designed by Symn · Jilin University**
 
 **Inspired by the simulation and design-review workflows of Gsmart, part of JLU Racing at Jilin University.**

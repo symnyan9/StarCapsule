@@ -172,6 +172,8 @@ Python handles validation, packing, the native desktop workflow and report gener
 
 ## Inspiration
 
+![JLU Racing — GSPEED × CONCEPTION × GSMART](docs/images/jlu-racing-logo.png)
+
 Inspired by the simulation and design-review workflows of **Gsmart, part of JLU Racing at Jilin University**.
 
 Designed by **Symn · Jilin University**.
@@ -185,8 +187,6 @@ Original code is MIT licensed. Bundled Three.js r146 and matching OrbitControls 
 # 简体中文
 
 把 STAR-CCM+ 仿真结果装进一个可携带、可交互、可离线打开的 HTML。
-
-作者 **Symn** · 学校 **Jilin University（吉林大学）**。
 
 [下载 Windows 安装包](https://github.com/symnyan9/StarCapsule/releases/tag/v0.3.1) · [版本发布](https://github.com/symnyan9/StarCapsule/releases) · [自动测试](https://github.com/symnyan9/StarCapsule/actions/workflows/ci.yml)
 
@@ -340,6 +340,8 @@ starcapsule-gui
 源码、说明和安装包通过本仓库及 [Releases](https://github.com/symnyan9/StarCapsule/releases) 提供。原创代码采用 MIT 许可；Three.js 与 OrbitControls 保留原许可，STAR 软件及 Java 库由用户自行提供。
 
 ## 灵感与作者
+
+![JLU Racing — GSPEED × CONCEPTION × GSMART](docs/images/jlu-racing-logo.png)
 
 灵感来自吉林大学 **JLU Racing 旗下 Gsmart 吉智无人驾驶方程式车队** 的仿真与设计评审工作流。
 
